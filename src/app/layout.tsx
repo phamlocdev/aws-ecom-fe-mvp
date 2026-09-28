@@ -11,8 +11,9 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "PhuLoc's Ecommerce",
-  description: 'A modern e-commerce platform built with Next.js, AWS services',
+  title: "PhuLoc's Ecommerce - Version 2.0",
+  description:
+    'A modern e-commerce platform built with Next.js and AWS services, such as S3, CloudFront, and DynamoDB. This platform provides a seamless shopping experience with a focus on performance, scalability, and security.',
 }
 
 export default function RootLayout({
