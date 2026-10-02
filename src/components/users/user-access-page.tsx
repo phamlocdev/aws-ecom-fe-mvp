@@ -16,7 +16,6 @@ import { Permission } from '@/lib/permissions'
 import { resolveDynamicRouteSegment } from '@/lib/routing'
 import type { Permission as PermissionValue } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { useAuthStore } from '@/store/auth-store'
 
 type ActionKey = 'create' | 'read' | 'update' | 'delete'
 
@@ -96,6 +95,12 @@ const permissionRows: PermissionRow[] = [
       update: Permission.USERS_EMAIL_RESEND,
     },
   },
+  {
+    module: 'Audit',
+    permissions: {
+      read: Permission.AUDIT_READ,
+    },
+  },
 ]
 
 export function UserAccessPage() {
@@ -103,7 +108,6 @@ export function UserAccessPage() {
   const pathname = usePathname()
   const router = useRouter()
   const userId = resolveDynamicRouteSegment(params.userId, pathname, '/admin/users')
-  const { userId: currentUserId } = useAuthStore()
   const usersResult = useUsersQuery()
   const updatePermissionsMutation = useUpdateUserPermissionsMutation()
   const users = usersResult.data ?? []
@@ -112,7 +116,6 @@ export function UserAccessPage() {
   const [selectedPermissionsOverride, setSelectedPermissionsOverride] = useState<
     PermissionValue[] | null
   >(null)
-  const isSelf = Boolean(currentUserId && currentUserId === userId)
   const selectedPermissions = selectedPermissionsOverride ?? user?.permissions ?? emptyPermissions
   const selectedSet = useMemo(() => new Set(selectedPermissions), [selectedPermissions])
 
@@ -149,7 +152,7 @@ export function UserAccessPage() {
   }
 
   async function handleSave() {
-    if (!user?.sub || isSelf) {
+    if (!user?.sub) {
       return
     }
 
@@ -193,15 +196,9 @@ export function UserAccessPage() {
           </div>
         </div>
 
-        {isSelf ? (
-          <div className='rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive'>
-            You cannot update your own permissions.
-          </div>
-        ) : null}
-
         <PermissionMatrix
           selectedPermissions={selectedSet}
-          disabled={isSelf || updatePermissionsMutation.isLoading}
+          disabled={updatePermissionsMutation.isLoading}
           onToggle={togglePermission}
         />
       </section>
@@ -217,7 +214,7 @@ export function UserAccessPage() {
           </Button>
           <Button
             type='button'
-            disabled={isSelf || updatePermissionsMutation.isLoading}
+            disabled={updatePermissionsMutation.isLoading}
             onClick={handleSave}
           >
             <Save />

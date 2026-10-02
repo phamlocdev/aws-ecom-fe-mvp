@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import {
   Boxes,
   CreditCard,
+  History,
   Layers3,
   ListChecks,
   LogOut,
@@ -54,6 +55,12 @@ const navItems = [
     icon: ListChecks,
     permission: Permission.USERS_LOGIN_AUDIT_READ,
   },
+  {
+    href: '/admin/audit',
+    label: 'Audit log',
+    icon: History,
+    adminOnly: true,
+  },
   { href: '/admin/profile', label: 'Profile', icon: UserCircle },
 ]
 
@@ -77,9 +84,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const isAdmin = hasRole(idTokenClaims, 'admin')
   const hasAdminAccess = isAdmin || hasRole(idTokenClaims, 'manager')
   const isCustomerSignedIn = isAuthenticated && !hasAdminAccess
-  const visibleNavItems = navItems.filter(
-    (item) => !item.permission || hasPermission(accessTokenClaims, item.permission),
-  )
+  const visibleNavItems = navItems.filter((item) => {
+    if (item.adminOnly && !isAdmin) {
+      return false
+    }
+
+    return !item.permission || hasPermission(accessTokenClaims, item.permission)
+  })
 
   useEffect(() => {
     if (

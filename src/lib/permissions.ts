@@ -1,4 +1,5 @@
 export const Permission = {
+  AUDIT_READ: 'audit:read',
   PRODUCTS_READ: 'products:read',
   PRODUCTS_CREATE: 'products:create',
   PRODUCTS_UPDATE: 'products:update',
@@ -28,6 +29,7 @@ export type Permission = (typeof Permission)[keyof typeof Permission]
 export const ALL_PERMISSIONS = Object.values(Permission)
 
 export const PERMISSION_LABELS: Record<Permission, string> = {
+  [Permission.AUDIT_READ]: 'Read audit log',
   [Permission.PRODUCTS_READ]: 'Read products',
   [Permission.PRODUCTS_CREATE]: 'Create products',
   [Permission.PRODUCTS_UPDATE]: 'Update products',

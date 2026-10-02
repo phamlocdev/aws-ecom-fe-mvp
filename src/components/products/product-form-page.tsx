@@ -93,7 +93,7 @@ export function ProductFormPage({
             availableQuantity: 0,
             imageUrl: product.imageUrl,
             images: toProductImagePayload(product),
-            status: product.status,
+            status: product.status === 'DELETED' ? 'INACTIVE' : product.status,
           }
         : emptyProduct,
     )

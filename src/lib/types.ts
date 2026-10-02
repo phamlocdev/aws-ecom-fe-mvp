@@ -1,4 +1,4 @@
-export type ProductStatus = 'ACTIVE' | 'INACTIVE'
+export type ProductStatus = 'ACTIVE' | 'INACTIVE' | 'DELETED'
 export type CartStatus = 'ACTIVE' | 'EXPIRED'
 export type OrderStatus =
   'PENDING' | 'RESERVED' | 'CONFIRMED' | 'SHIPPED' | 'CANCELLED' | 'FAILED' | 'EXPIRED'
@@ -23,6 +23,7 @@ export type EmailType =
   | 'COGNITO_ACCOUNT_TAKEOVER_NOTIFICATION'
 export type EmailContextType = 'ORDER' | 'USER'
 export type Permission =
+  | 'audit:read'
   | 'products:read'
   | 'products:create'
   | 'products:update'
@@ -56,6 +57,7 @@ export type Product = {
   imageUrl?: string
   images?: ProductImage[]
   status: ProductStatus
+  deletedAt?: string
   createdAt: string
   updatedAt: string
 }
@@ -186,8 +188,43 @@ export type Category = {
   categoryId: string
   name: string
   description?: string
+  status?: 'ACTIVE' | 'DELETED'
+  deletedAt?: string
   createdAt: string
   updatedAt: string
+}
+
+export type AuditEntityType = 'ORDER' | 'PRODUCT' | 'CATEGORY' | 'INVENTORY' | 'USER_ACCOUNT'
+
+export type AuditFieldChange = {
+  before?: unknown
+  after?: unknown
+}
+
+export type AuditLogItem = {
+  entityKey: string
+  occurredAtAuditId: string
+  auditId: string
+  entityType: AuditEntityType
+  entityId: string
+  sourceTable?: string
+  eventName: 'INSERT' | 'MODIFY' | 'REMOVE'
+  occurredAt: string
+  actorType: 'customer' | 'admin' | 'system' | 'unknown'
+  actorId?: string
+  actorEmail?: string
+  reason?: string
+  diff: Record<string, AuditFieldChange>
+  before: Record<string, unknown>
+  after: Record<string, unknown>
+  keys?: Record<string, unknown>
+  schemaVersion: number
+  expiresAt: number
+}
+
+export type AuditLogQueryResult = {
+  items: AuditLogItem[]
+  nextCursor: string | null
 }
 
 export type Cart = {
