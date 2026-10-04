@@ -47,6 +47,18 @@ export type Permission =
   | 'users:email:resend'
   | 'users:login-audit:read'
 
+export type UserAddress = {
+  recipientName?: string
+  phone?: string
+  line1?: string
+  location?: {
+    ward?: string
+    district?: string
+    city?: string
+  }
+  notes?: string
+}
+
 export type Product = {
   productId: string
   name: string
@@ -79,6 +91,7 @@ export type UserProfile = {
   avatarKey?: string
   avatarReadUrl?: string
   avatarReadUrlExpiresInSeconds?: number
+  address?: UserAddress
   passwordStatus: UserPasswordStatus
   createdAt: string
   updatedAt: string

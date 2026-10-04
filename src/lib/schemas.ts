@@ -38,6 +38,42 @@ export const userProfileFormSchema = z.object({
     .union([z.string().trim().max(120), z.literal('')])
     .optional()
     .transform((value) => (value === '' ? undefined : value)),
+  address: z
+    .object({
+      recipientName: z
+        .union([z.string().trim().max(120), z.literal('')])
+        .optional()
+        .transform((value) => (value === '' ? undefined : value)),
+      phone: z
+        .union([z.string().trim().max(40), z.literal('')])
+        .optional()
+        .transform((value) => (value === '' ? undefined : value)),
+      line1: z
+        .union([z.string().trim().max(240), z.literal('')])
+        .optional()
+        .transform((value) => (value === '' ? undefined : value)),
+      location: z
+        .object({
+          ward: z
+            .union([z.string().trim().max(120), z.literal('')])
+            .optional()
+            .transform((value) => (value === '' ? undefined : value)),
+          district: z
+            .union([z.string().trim().max(120), z.literal('')])
+            .optional()
+            .transform((value) => (value === '' ? undefined : value)),
+          city: z
+            .union([z.string().trim().max(120), z.literal('')])
+            .optional()
+            .transform((value) => (value === '' ? undefined : value)),
+        })
+        .optional(),
+      notes: z
+        .union([z.string().trim().max(500), z.literal('')])
+        .optional()
+        .transform((value) => (value === '' ? undefined : value)),
+    })
+    .optional(),
 })
 
 export const categoryCreateSchema = z.object({

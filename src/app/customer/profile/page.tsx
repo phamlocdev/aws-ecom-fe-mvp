@@ -11,5 +11,5 @@ export default function CustomerProfilePage() {
     return <Skeleton className='h-96 w-full' />
   }
 
-  return <UserProfileForm title='Customer profile' />
+  return <UserProfileForm title='Customer profile' enableAddress />
 }

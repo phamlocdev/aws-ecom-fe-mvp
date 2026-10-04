@@ -7,6 +7,7 @@ import type {
   ResendEmailResult,
   UserLoginAuditQueryResult,
   UserProfile,
+  UserAddress,
 } from '@/lib/types'
 
 export const USER_PROFILE_QUERY_KEYS = {
@@ -24,6 +25,7 @@ export const USER_PROFILE_QUERY_KEYS = {
 export type UpdateUserProfileInput = {
   name?: string
   avatarKey?: string | null
+  address?: UserAddress
 }
 
 export type SetOwnPasswordInput = {

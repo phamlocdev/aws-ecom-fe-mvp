@@ -24,7 +24,13 @@ import { Label } from '@/components/ui/label'
 import { ResourceError } from '@/components/resource-error'
 import { Skeleton } from '@/components/ui/skeleton'
 
-export function UserProfileForm({ title }: { title: string }) {
+export function UserProfileForm({
+  title,
+  enableAddress = false,
+}: {
+  title: string
+  enableAddress?: boolean
+}) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const profileResult = useUserProfileQuery()
   const updateProfileMutation = useUpdateUserProfileMutation()
@@ -38,7 +44,20 @@ export function UserProfileForm({ title }: { title: string }) {
 
   const form = useForm<UserProfileFormInput, unknown, UserProfileFormValues>({
     resolver: zodResolver(userProfileFormSchema),
-    defaultValues: { name: '' },
+    defaultValues: {
+      name: '',
+      address: {
+        recipientName: '',
+        phone: '',
+        line1: '',
+        location: {
+          ward: '',
+          district: '',
+          city: '',
+        },
+        notes: '',
+      },
+    },
   })
   const changePasswordForm = useForm<ChangePasswordInput, unknown, ChangePasswordValues>({
     resolver: zodResolver(changePasswordSchema),
@@ -50,7 +69,20 @@ export function UserProfileForm({ title }: { title: string }) {
   })
 
   useEffect(() => {
-    form.reset({ name: profile?.name ?? '' })
+    form.reset({
+      name: profile?.name ?? '',
+      address: {
+        recipientName: profile?.address?.recipientName ?? '',
+        phone: profile?.address?.phone ?? '',
+        line1: profile?.address?.line1 ?? '',
+        location: {
+          ward: profile?.address?.location?.ward ?? '',
+          district: profile?.address?.location?.district ?? '',
+          city: profile?.address?.location?.city ?? '',
+        },
+        notes: profile?.address?.notes ?? '',
+      },
+    })
   }, [form, profile])
 
   useEffect(() => {
@@ -109,6 +141,7 @@ export function UserProfileForm({ title }: { title: string }) {
       await updateProfileMutation.mutateAsync({
         name: values.name,
         ...(avatarKey !== undefined ? { avatarKey } : {}),
+        ...(enableAddress ? { address: values.address } : {}),
       })
 
       setAvatarFile(null)
@@ -222,6 +255,112 @@ export function UserProfileForm({ title }: { title: string }) {
             </div>
           </div>
         </section>
+
+        {enableAddress ? (
+          <section className='grid gap-4 border-t pt-4'>
+            <div>
+              <h2 className='text-base font-semibold tracking-normal'>Address</h2>
+              <p className='mt-1 text-sm text-muted-foreground'>
+                Save your default delivery contact and location.
+              </p>
+            </div>
+            <div className='grid gap-4 sm:grid-cols-2'>
+              <div className='space-y-2'>
+                <Label htmlFor='addressRecipientName'>Recipient name</Label>
+                <Input
+                  id='addressRecipientName'
+                  aria-invalid={Boolean(form.formState.errors.address?.recipientName)}
+                  {...form.register('address.recipientName')}
+                />
+                {form.formState.errors.address?.recipientName ? (
+                  <p className='text-xs text-destructive'>
+                    {form.formState.errors.address.recipientName.message}
+                  </p>
+                ) : null}
+              </div>
+              <div className='space-y-2'>
+                <Label htmlFor='addressPhone'>Phone</Label>
+                <Input
+                  id='addressPhone'
+                  aria-invalid={Boolean(form.formState.errors.address?.phone)}
+                  {...form.register('address.phone')}
+                />
+                {form.formState.errors.address?.phone ? (
+                  <p className='text-xs text-destructive'>
+                    {form.formState.errors.address.phone.message}
+                  </p>
+                ) : null}
+              </div>
+            </div>
+            <div className='space-y-2'>
+              <Label htmlFor='addressLine1'>Address line</Label>
+              <Input
+                id='addressLine1'
+                aria-invalid={Boolean(form.formState.errors.address?.line1)}
+                {...form.register('address.line1')}
+              />
+              {form.formState.errors.address?.line1 ? (
+                <p className='text-xs text-destructive'>
+                  {form.formState.errors.address.line1.message}
+                </p>
+              ) : null}
+            </div>
+            <div className='grid gap-4 sm:grid-cols-3'>
+              <div className='space-y-2'>
+                <Label htmlFor='addressWard'>Ward</Label>
+                <Input
+                  id='addressWard'
+                  aria-invalid={Boolean(form.formState.errors.address?.location?.ward)}
+                  {...form.register('address.location.ward')}
+                />
+                {form.formState.errors.address?.location?.ward ? (
+                  <p className='text-xs text-destructive'>
+                    {form.formState.errors.address.location.ward.message}
+                  </p>
+                ) : null}
+              </div>
+              <div className='space-y-2'>
+                <Label htmlFor='addressDistrict'>District</Label>
+                <Input
+                  id='addressDistrict'
+                  aria-invalid={Boolean(form.formState.errors.address?.location?.district)}
+                  {...form.register('address.location.district')}
+                />
+                {form.formState.errors.address?.location?.district ? (
+                  <p className='text-xs text-destructive'>
+                    {form.formState.errors.address.location.district.message}
+                  </p>
+                ) : null}
+              </div>
+              <div className='space-y-2'>
+                <Label htmlFor='addressCity'>City</Label>
+                <Input
+                  id='addressCity'
+                  aria-invalid={Boolean(form.formState.errors.address?.location?.city)}
+                  {...form.register('address.location.city')}
+                />
+                {form.formState.errors.address?.location?.city ? (
+                  <p className='text-xs text-destructive'>
+                    {form.formState.errors.address.location.city.message}
+                  </p>
+                ) : null}
+              </div>
+            </div>
+            <div className='space-y-2'>
+              <Label htmlFor='addressNotes'>Notes</Label>
+              <Input
+                id='addressNotes'
+                aria-invalid={Boolean(form.formState.errors.address?.notes)}
+                {...form.register('address.notes')}
+              />
+              {form.formState.errors.address?.notes ? (
+                <p className='text-xs text-destructive'>
+                  {form.formState.errors.address.notes.message}
+                </p>
+              ) : null}
+            </div>
+          </section>
+        ) : null}
 
         <div className='flex justify-end'>
           <Button type='submit' disabled={isPending}>
