@@ -16,12 +16,15 @@ import {
   buildAuditValueDiff,
   formatAuditValue,
   hasAuditDiffChanges,
+  summarizeAuditDiffFields,
   type AuditDiffNode,
   type AuditDiffStatus,
 } from '@/lib/audit-diff'
 import { formatDateTime } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import type { AuditFieldChange, AuditLogItem } from '@/lib/types'
+
+const MAX_CHANGED_FIELD_BADGES = 3
 
 export function AuditLogTable({ items }: { items: AuditLogItem[] }) {
   if (items.length === 0) {
@@ -49,7 +52,9 @@ export function AuditLogTable({ items }: { items: AuditLogItem[] }) {
         </TableHeader>
         <TableBody>
           {items.map((item) => {
-            const fieldNames = Object.keys(item.diff)
+            const changedFields = summarizeAuditDiffFields(item.diff)
+            const visibleFields = changedFields.slice(0, MAX_CHANGED_FIELD_BADGES)
+            const hiddenFieldCount = Math.max(changedFields.length - MAX_CHANGED_FIELD_BADGES, 0)
 
             return (
               <TableRow key={`${item.entityKey}-${item.occurredAtAuditId}`}>
@@ -76,12 +81,28 @@ export function AuditLogTable({ items }: { items: AuditLogItem[] }) {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className='flex max-w-md flex-wrap gap-1'>
-                    {fieldNames.map((field) => (
-                      <Badge key={field} variant='secondary'>
-                        {field}
+                  <div className='flex max-w-sm flex-wrap gap-1'>
+                    {visibleFields.map((field) => (
+                      <Badge
+                        key={field.key}
+                        variant='secondary'
+                        className='max-w-56 truncate'
+                        title={field.title}
+                      >
+                        {field.label}
                       </Badge>
                     ))}
+                    {hiddenFieldCount > 0 ? (
+                      <Badge
+                        variant='outline'
+                        title={changedFields
+                          .slice(MAX_CHANGED_FIELD_BADGES)
+                          .map((field) => field.label)
+                          .join('\n')}
+                      >
+                        +{hiddenFieldCount} more
+                      </Badge>
+                    ) : null}
                   </div>
                 </TableCell>
                 <TableCell className='max-w-64 truncate text-sm text-muted-foreground'>
