@@ -12,6 +12,17 @@ export type AuditDiffNode = {
   children: AuditDiffNode[]
 }
 
+type AuditFieldChange = {
+  before?: unknown
+  after?: unknown
+}
+
+export type AuditChangedFieldSummary = {
+  key: string
+  label: string
+  title: string
+}
+
 const ARRAY_KEY_FIELDS = ['id', 'key', 'productId', 'lineId', 'userId'] as const
 
 export function buildAuditValueDiff(
@@ -44,9 +55,9 @@ export function buildAuditValueDiff(
 
   if (isPlainObject(before) && isPlainObject(after)) {
     const keys = Array.from(new Set([...Object.keys(before), ...Object.keys(after)])).sort()
-    const children = keys.map((key) =>
-      buildAuditValueDiff(before[key], after[key], key, joinPath(path, key)),
-    )
+    const children = keys
+      .map((key) => buildAuditValueDiff(before[key], after[key], key, joinPath(path, key)))
+      .filter(hasAuditDiffChanges)
 
     return {
       key: path,
@@ -61,7 +72,7 @@ export function buildAuditValueDiff(
   }
 
   if (Array.isArray(before) && Array.isArray(after)) {
-    const children = buildArrayChildren(before, after, path)
+    const children = buildArrayChildren(before, after, path).filter(hasAuditDiffChanges)
 
     return {
       key: path,
@@ -111,8 +122,46 @@ export function formatAuditValue(value: unknown): string {
   return JSON.stringify(value, null, 2)
 }
 
+export function flattenAuditDiffPaths(diff: Record<string, AuditFieldChange>): string[] {
+  const paths = Object.entries(diff).flatMap(([field, change]) =>
+    flattenChangedValuePaths(change.before, change.after, field),
+  )
+
+  return Array.from(new Set(paths))
+}
+
+export function summarizeAuditDiffFields(
+  diff: Record<string, AuditFieldChange>,
+): AuditChangedFieldSummary[] {
+  return Object.entries(diff).flatMap(([field, change]) => {
+    const paths = flattenChangedValuePaths(change.before, change.after, field)
+    const uniquePaths = Array.from(new Set(paths))
+    const isArrayChange =
+      Array.isArray(change.before) ||
+      Array.isArray(change.after) ||
+      uniquePaths.some((path) => path.startsWith(`${field}[`))
+
+    if (!isArrayChange) {
+      return uniquePaths.map((path) => ({
+        key: path,
+        label: path,
+        title: path,
+      }))
+    }
+
+    const count = Math.max(uniquePaths.length, 1)
+    return [
+      {
+        key: field,
+        label: `${field} (${count} ${count === 1 ? 'change' : 'changes'})`,
+        title: uniquePaths.join('\n'),
+      },
+    ]
+  })
+}
+
 function buildArrayChildren(before: unknown[], after: unknown[], path: string): AuditDiffNode[] {
-  if (canUseKeyedArrayDiff(before, after)) {
+  if (canUseKeyedArrayDiff(before, after) && !hasCommonArrayKeyReorder(before, after)) {
     return buildKeyedArrayChildren(before, after, path)
   }
 
@@ -269,6 +318,72 @@ function canUseKeyedArrayDiff(before: unknown[], after: unknown[]): boolean {
     keys.every(Boolean) &&
     new Set(before.map(readArrayItemKey)).size === before.length &&
     new Set(after.map(readArrayItemKey)).size === after.length
+  )
+}
+
+function flattenChangedValuePaths(before: unknown, after: unknown, path: string): string[] {
+  if (isSameValue(before, after)) {
+    return []
+  }
+
+  if (isPlainObject(before) && isPlainObject(after)) {
+    const keys = Array.from(new Set([...Object.keys(before), ...Object.keys(after)])).sort()
+    const paths = keys.flatMap((key) =>
+      flattenChangedValuePaths(before[key], after[key], joinPath(path, key)),
+    )
+
+    return paths.length > 0 ? paths : [path]
+  }
+
+  if (Array.isArray(before) && Array.isArray(after)) {
+    if (!canUseKeyedArrayDiff(before, after) || hasCommonArrayKeyReorder(before, after)) {
+      return [path]
+    }
+
+    const beforeByKey = new Map(before.map((item) => [readArrayItemKey(item), item] as const))
+    const afterByKey = new Map(after.map((item) => [readArrayItemKey(item), item] as const))
+    const keys = Array.from(new Set([...beforeByKey.keys(), ...afterByKey.keys()])).sort()
+    const paths = keys.flatMap((key) =>
+      flattenChangedArrayItemPaths(beforeByKey.get(key), afterByKey.get(key), `${path}[${key}]`),
+    )
+
+    return paths.length > 0 ? paths : [path]
+  }
+
+  return [path]
+}
+
+function flattenChangedArrayItemPaths(before: unknown, after: unknown, path: string): string[] {
+  if (!isPlainObject(before) || !isPlainObject(after)) {
+    return flattenChangedValuePaths(before, after, path)
+  }
+
+  const keys = Array.from(new Set([...Object.keys(before), ...Object.keys(after)])).sort()
+  const paths = keys
+    .filter((key) => !isUnchangedArrayKeyField(key, before, after))
+    .flatMap((key) => flattenChangedValuePaths(before[key], after[key], joinPath(path, key)))
+
+  return paths.length > 0 ? paths : [path]
+}
+
+function hasCommonArrayKeyReorder(before: unknown[], after: unknown[]): boolean {
+  const afterKeys = new Set(after.map(readArrayItemKey))
+  const beforeCommonKeys = before.map(readArrayItemKey).filter((key) => afterKeys.has(key))
+  const beforeKeys = new Set(beforeCommonKeys)
+  const afterCommonKeys = after.map(readArrayItemKey).filter((key) => beforeKeys.has(key))
+
+  return !isSameValue(beforeCommonKeys, afterCommonKeys)
+}
+
+function isUnchangedArrayKeyField(
+  key: string,
+  before: Record<string, unknown>,
+  after: Record<string, unknown>,
+): boolean {
+  return (
+    ARRAY_KEY_FIELDS.includes(key as (typeof ARRAY_KEY_FIELDS)[number]) &&
+    before[key] !== undefined &&
+    isSameValue(before[key], after[key])
   )
 }
 
