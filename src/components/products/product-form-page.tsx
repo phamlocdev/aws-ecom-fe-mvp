@@ -19,6 +19,8 @@ import {
   getPrimaryProductImage,
 } from '@/lib/product-images'
 import { cn } from '@/lib/utils'
+import { PageHeader } from '@/components/shared/page-header'
+import { RequiredMark } from '@/components/shared/required-mark'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -191,24 +193,18 @@ export function ProductFormPage({
 
   return (
     <div className='space-y-6'>
-      <div className='flex flex-col justify-between gap-3 sm:flex-row sm:items-end'>
-        <div className='space-y-2'>
-          <Link
-            href='/admin/products'
-            className={cn(buttonVariants({ variant: 'ghost', className: 'px-0' }))}
-          >
-            <ArrowLeft />
-            Products
-          </Link>
-          <div>
-            <h1 className='text-2xl font-semibold tracking-normal'>
-              {isEdit ? 'Edit product' : 'Create product'}
-            </h1>
-            <p className='mt-1 text-sm text-muted-foreground'>
-              Save product data after direct S3 image uploads complete.
-            </p>
-          </div>
-        </div>
+      <div className='space-y-2'>
+        <Link
+          href='/admin/products'
+          className={cn(buttonVariants({ variant: 'ghost', className: 'px-0' }))}
+        >
+          <ArrowLeft />
+          Products
+        </Link>
+        <PageHeader
+          title={isEdit ? 'Edit product' : 'Create product'}
+          subtitle='Save product data after direct S3 image uploads complete.'
+        />
       </div>
 
       {categoriesError ? (
@@ -223,7 +219,10 @@ export function ProductFormPage({
         <section className='space-y-4 lg:col-span-7'>
           <div className='grid gap-4 rounded-md border bg-card p-4 sm:grid-cols-2'>
             <div className='space-y-2 sm:col-span-2'>
-              <Label htmlFor='name'>Name</Label>
+              <Label htmlFor='name'>
+                Name
+                <RequiredMark />
+              </Label>
               <Input
                 id='name'
                 aria-invalid={Boolean(form.formState.errors.name)}
@@ -235,7 +234,10 @@ export function ProductFormPage({
             </div>
 
             <div className='space-y-2'>
-              <Label htmlFor='price'>Price</Label>
+              <Label htmlFor='price'>
+                Price
+                <RequiredMark />
+              </Label>
               <Input
                 id='price'
                 min={1}
@@ -269,7 +271,10 @@ export function ProductFormPage({
             ) : null}
 
             <div className='space-y-2'>
-              <Label>Category</Label>
+              <Label>
+                Category
+                <RequiredMark />
+              </Label>
               {categories.length > 0 ? (
                 <Controller
                   control={form.control}
@@ -332,7 +337,10 @@ export function ProductFormPage({
             </div>
 
             <div className='space-y-2 sm:col-span-2'>
-              <Label htmlFor='description'>Description</Label>
+              <Label htmlFor='description'>
+                Description
+                <RequiredMark />
+              </Label>
               <Textarea
                 id='description'
                 rows={5}

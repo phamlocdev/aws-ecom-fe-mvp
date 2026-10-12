@@ -47,7 +47,6 @@ apiClient.interceptors.response.use(
 
     originalRequest._authRetry = true
     const token = await refreshAccessTokenOnce()
-    debugger
 
     if (!token) {
       await handleRefreshFailure()

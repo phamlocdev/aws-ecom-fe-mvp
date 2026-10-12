@@ -6,6 +6,7 @@ import { ArrowRight, CreditCard, RefreshCcw } from 'lucide-react'
 import { toast } from 'sonner'
 import { ResourceError } from '@/components/resource-error'
 import { OrderStatusBadge, PaymentStatusBadge } from '@/components/customer/order-status-badges'
+import { PageHeader } from '@/components/shared/page-header'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -43,10 +44,7 @@ export function OrderDetailPage() {
       order.paymentExpiresAt <= Math.floor(Date.now() / 1000)
 
     return Boolean(
-      order &&
-        order.status === 'RESERVED' &&
-        order.paymentStatus === 'NOT_STARTED' &&
-        !isExpired,
+      order && order.status === 'RESERVED' && order.paymentStatus === 'NOT_STARTED' && !isExpired,
     )
   }, [orderResult.data])
 
@@ -109,16 +107,17 @@ export function OrderDetailPage() {
 
   return (
     <div className='space-y-6'>
-      <div className='flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between'>
-        <div>
-          <h1 className='text-2xl font-semibold tracking-normal'>Order details</h1>
-          <p className='mt-1 font-mono text-xs text-muted-foreground'>{order.orderId}</p>
-        </div>
-        <div className='flex flex-wrap gap-2'>
-          <OrderStatusBadge status={order.status} />
-          <PaymentStatusBadge status={order.paymentStatus} />
-        </div>
-      </div>
+      <PageHeader
+        className='sm:items-start'
+        title='Order details'
+        subtitle={<span className='font-mono text-xs'>{order.orderId}</span>}
+        actions={
+          <div className='flex flex-wrap gap-2'>
+            <OrderStatusBadge status={order.status} />
+            <PaymentStatusBadge status={order.paymentStatus} />
+          </div>
+        }
+      />
 
       <Card>
         <CardHeader>
@@ -222,7 +221,7 @@ function getAutoRedirectStorageKey(orderId: string): string {
   return `order-payment-auto-redirected:${orderId}`
 }
 
-function OrderDetailSkeleton() {
+export function OrderDetailSkeleton() {
   return (
     <div className='space-y-6'>
       <Skeleton className='h-8 w-40' />

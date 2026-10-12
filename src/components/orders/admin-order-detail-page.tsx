@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useParams, usePathname } from 'next/navigation'
 import { OrderEmailTrackingPanel } from '@/components/email/order-email-tracking-panel'
+import { OrderDetailSkeleton } from '@/components/orders/order-detail-page'
 import { ResourceError } from '@/components/resource-error'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useOrderQuery } from '@/hooks/use-orders'
@@ -25,11 +26,7 @@ export function AdminOrderDetailPage() {
   }
 
   if (orderResult.isLoading || !order) {
-    return (
-      <div className='rounded-md border bg-card p-10 text-center text-sm text-muted-foreground'>
-        Loading order...
-      </div>
-    )
+    return <OrderDetailSkeleton />
   }
 
   return (

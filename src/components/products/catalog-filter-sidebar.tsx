@@ -3,6 +3,14 @@
 import { useEffect, useState } from 'react'
 import { Search, X } from 'lucide-react'
 import type { Category, ProductFilterParams, ProductStatus } from '@/lib/types'
+import {
+  countActiveFilters,
+  localDateEndIso,
+  localDateStartIso,
+  parsePositiveInteger,
+  removeEmptyFilters,
+  toLocalDateInput,
+} from '@/lib/filter-dates'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -202,53 +210,4 @@ export function CatalogFilterSidebar({
       </section>
     </aside>
   )
-}
-
-function removeEmptyFilters(filters: ProductFilterParams): ProductFilterParams {
-  return {
-    ...(filters.categoryId ? { categoryId: filters.categoryId } : {}),
-    ...(filters.status ? { status: filters.status } : {}),
-    ...(filters.minPrice !== undefined ? { minPrice: filters.minPrice } : {}),
-    ...(filters.maxPrice !== undefined ? { maxPrice: filters.maxPrice } : {}),
-    ...(filters.updatedFrom ? { updatedFrom: filters.updatedFrom } : {}),
-    ...(filters.updatedTo ? { updatedTo: filters.updatedTo } : {}),
-    ...(filters.q?.trim() ? { q: filters.q.trim() } : {}),
-  }
-}
-
-function parsePositiveInteger(value: string): number | undefined {
-  const parsed = Number(value)
-  return Number.isInteger(parsed) && parsed >= 1 ? parsed : undefined
-}
-
-function countActiveFilters(filters: ProductFilterParams): number {
-  return [
-    filters.categoryId,
-    filters.status,
-    filters.minPrice !== undefined || filters.maxPrice !== undefined ? 'price' : undefined,
-    filters.updatedFrom || filters.updatedTo ? 'updated' : undefined,
-    filters.q,
-  ].filter(Boolean).length
-}
-
-function toLocalDateInput(value: string): string {
-  const date = new Date(value)
-  if (!Number.isFinite(date.getTime())) {
-    return ''
-  }
-
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
-}
-
-function localDateStartIso(value: string): string {
-  const [year, month, day] = value.split('-').map(Number)
-  return new Date(year, month - 1, day, 0, 0, 0, 0).toISOString()
-}
-
-function localDateEndIso(value: string): string {
-  const [year, month, day] = value.split('-').map(Number)
-  return new Date(year, month - 1, day, 23, 59, 59, 999).toISOString()
 }

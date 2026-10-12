@@ -6,6 +6,7 @@ import { ArrowLeft, CheckCircle2, ShoppingCart, Zap } from 'lucide-react'
 import { toast } from 'sonner'
 import { useActiveCart } from '@/hooks/use-active-cart'
 import { useAddCartItemMutation } from '@/hooks/use-carts'
+import { ProductImageGallery } from '@/components/products/product-image-gallery'
 import { ResourceError } from '@/components/resource-error'
 import { Badge } from '@/components/ui/badge'
 import { Button, buttonVariants } from '@/components/ui/button'
@@ -14,12 +15,6 @@ import { useCategoriesQuery } from '@/hooks/use-categories'
 import { useProductQuery } from '@/hooks/use-products'
 import { toApiClientError } from '@/lib/api/errors'
 import { formatDateTime, formatVnd } from '@/lib/format'
-import {
-  getProductImageAlt,
-  getProductImagePublicSrc,
-  getProductImageSrc,
-  getPrimaryProductImage,
-} from '@/lib/product-images'
 import { resolveDynamicRouteSegment } from '@/lib/routing'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/auth-store'
@@ -64,8 +59,6 @@ export function ProductDetailPage() {
   }
 
   const resolvedProduct = product
-  const primaryImage = getPrimaryProductImage(product)
-  const imageSrc = getProductImageSrc(product)
 
   async function handleAddToCart(redirectToCheckout = false) {
     if (!isAuthenticated) {
@@ -99,44 +92,8 @@ export function ProductDetailPage() {
       </Link>
 
       <div className='grid gap-8 lg:grid-cols-12'>
-        <section className='lg:col-span-7'>
-          <div className='overflow-hidden rounded-md border bg-muted'>
-            <div className='aspect-[4/3]'>
-              {imageSrc ? (
-                <img
-                  src={imageSrc}
-                  alt={getProductImageAlt(product, primaryImage)}
-                  className='h-full w-full object-cover'
-                />
-              ) : (
-                <div className='flex h-full w-full items-center justify-center text-muted-foreground'>
-                  No image
-                </div>
-              )}
-            </div>
-          </div>
-          {product.images && product.images.length > 1 ? (
-            <div className='mt-3 grid grid-cols-4 gap-2'>
-              {product.images.map((image) => {
-                const thumbnailSrc = getProductImagePublicSrc(image)
-
-                return (
-                  <div
-                    key={image.key}
-                    className='aspect-square overflow-hidden rounded-md border bg-muted'
-                  >
-                    {thumbnailSrc ? (
-                      <img
-                        src={thumbnailSrc}
-                        alt={getProductImageAlt(product, image)}
-                        className='h-full w-full object-cover'
-                      />
-                    ) : null}
-                  </div>
-                )
-              })}
-            </div>
-          ) : null}
+        <section className='lg:sticky lg:top-24 lg:col-span-7 lg:self-start'>
+          <ProductImageGallery product={product} />
         </section>
 
         <section className='space-y-6 lg:col-span-5'>
@@ -181,7 +138,7 @@ export function ProductDetailPage() {
             </Button>
           </div>
 
-          <dl className='grid gap-3 rounded-md border bg-card p-4 text-sm'>
+          <dl className='grid gap-3 rounded-xl border bg-card p-4 text-sm'>
             <div className='flex justify-between gap-4'>
               <dt className='text-muted-foreground'>Product ID</dt>
               <dd className='font-mono text-xs'>{product.productId}</dd>

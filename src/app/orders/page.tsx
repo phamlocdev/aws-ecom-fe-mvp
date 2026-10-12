@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { ResourceError } from '@/components/resource-error'
 import { OrderStatusBadge, PaymentStatusBadge } from '@/components/customer/order-status-badges'
+import { PageHeader } from '@/components/shared/page-header'
 import { buttonVariants } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -44,10 +45,7 @@ export default function OrdersPage() {
 
   return (
     <div className='space-y-4'>
-      <div>
-        <h1 className='text-2xl font-semibold tracking-normal'>Your orders</h1>
-        <p className='mt-1 text-sm text-muted-foreground'>Track checkout and payment progress.</p>
-      </div>
+      <PageHeader title='Your orders' subtitle='Track checkout and payment progress.' />
       <div className='space-y-4'>
         {orders.map((order) => (
           <Card key={order.orderId}>

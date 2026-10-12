@@ -1,3 +1,7 @@
+import type { Permission } from '@/lib/permissions'
+
+export type { Permission }
+
 export type ProductStatus = 'ACTIVE' | 'INACTIVE' | 'DELETED'
 export type CartStatus = 'ACTIVE' | 'EXPIRED'
 export type OrderStatus =
@@ -22,30 +26,6 @@ export type EmailType =
   | 'COGNITO_AUTHENTICATION'
   | 'COGNITO_ACCOUNT_TAKEOVER_NOTIFICATION'
 export type EmailContextType = 'ORDER' | 'USER'
-export type Permission =
-  | 'audit:read'
-  | 'products:read'
-  | 'products:create'
-  | 'products:update'
-  | 'products:delete'
-  | 'categories:read'
-  | 'categories:create'
-  | 'categories:update'
-  | 'categories:delete'
-  | 'inventories:read'
-  | 'inventories:update'
-  | 'orders:read'
-  | 'orders:update'
-  | 'orders:email:read'
-  | 'orders:email:resend'
-  | 'users:read'
-  | 'users:create'
-  | 'users:update'
-  | 'users:disable'
-  | 'users:permissions:update'
-  | 'users:email:read'
-  | 'users:email:resend'
-  | 'users:login-audit:read'
 
 export type UserAddress = {
   recipientName?: string

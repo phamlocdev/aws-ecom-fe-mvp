@@ -6,6 +6,8 @@ import { AlertCircle, ArrowRight, Layers3, Package, Tags } from 'lucide-react'
 import { formatVnd } from '@/lib/format'
 import type { Category, Product } from '@/lib/types'
 import { ResourceError } from '@/components/resource-error'
+import { PageHeader } from '@/components/shared/page-header'
+import { PageHeaderSkeleton } from '@/components/shared/page-header-skeleton'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { buttonVariants } from '@/components/ui/button'
@@ -38,33 +40,36 @@ export default function AdminDashboardPage() {
   const categoriesError = categoriesResult.error ? toApiClientError(categoriesResult.error) : null
 
   if (isHydrating || !isAuthenticated) {
-    return <Skeleton className='h-96 w-full' />
+    return (
+      <div className='space-y-6'>
+        <PageHeaderSkeleton hasActions />
+        <Skeleton className='h-96 w-full' />
+      </div>
+    )
   }
 
   return (
     <div className='space-y-6'>
-      <div className='flex flex-col justify-between gap-4 sm:flex-row sm:items-end'>
-        <div>
-          <h1 className='text-2xl font-semibold tracking-normal'>Dashboard</h1>
-          <p className='mt-1 text-sm text-muted-foreground'>
-            Overview for products and categories stored through the NestJS API.
-          </p>
-        </div>
-        <div className='flex gap-2'>
-          <Link href='/admin/categories' className={cn(buttonVariants({ variant: 'outline' }))}>
-            Categories
-            <ArrowRight />
-          </Link>
-          <Link href='/admin/inventories' className={cn(buttonVariants({ variant: 'outline' }))}>
-            Inventories
-            <ArrowRight />
-          </Link>
-          <Link href='/admin/products' className={cn(buttonVariants())}>
-            Products
-            <ArrowRight />
-          </Link>
-        </div>
-      </div>
+      <PageHeader
+        title='Dashboard'
+        subtitle='Overview for products and categories stored through the NestJS API.'
+        actions={
+          <>
+            <Link href='/admin/categories' className={cn(buttonVariants({ variant: 'outline' }))}>
+              Categories
+              <ArrowRight />
+            </Link>
+            <Link href='/admin/inventories' className={cn(buttonVariants({ variant: 'outline' }))}>
+              Inventories
+              <ArrowRight />
+            </Link>
+            <Link href='/admin/products' className={cn(buttonVariants())}>
+              Products
+              <ArrowRight />
+            </Link>
+          </>
+        }
+      />
 
       {productsError ? (
         <ResourceError

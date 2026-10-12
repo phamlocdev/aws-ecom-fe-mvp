@@ -7,6 +7,8 @@ import { useSearchParams } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import { AuditLogDetailContent } from '@/components/audit/audit-log-table'
 import { ResourceError } from '@/components/resource-error'
+import { PageHeader } from '@/components/shared/page-header'
+import { PageHeaderSkeleton } from '@/components/shared/page-header-skeleton'
 import { buttonVariants } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAuditLogItemQuery } from '@/hooks/use-audit-log'
@@ -75,7 +77,7 @@ function AdminAuditDetailContent() {
           details={error.details}
         />
       ) : auditItemResult.isLoading ? (
-        <AuditDetailSkeleton />
+        <AuditDetailContentSkeleton />
       ) : auditItemResult.data ? (
         <AuditLogDetailContent item={auditItemResult.data} />
       ) : (
@@ -101,23 +103,37 @@ function AuditDetailFrame({
 }) {
   return (
     <div className='space-y-6'>
-      <div className='flex flex-col justify-between gap-4 sm:flex-row sm:items-start'>
-        <div className='min-w-0'>
-          <h1 className='text-2xl font-semibold tracking-normal'>Audit log detail</h1>
-          <p className='mt-1 break-words text-sm text-muted-foreground'>{title}</p>
-          <p className='mt-1 text-sm text-muted-foreground'>{description}</p>
-        </div>
-        <Link href='/admin/audit' className={cn(buttonVariants({ variant: 'outline' }))}>
-          <ArrowLeft />
-          Back to audit log
-        </Link>
-      </div>
+      <PageHeader
+        className='sm:items-start'
+        title='Audit log detail'
+        subtitle={
+          <>
+            <span className='block break-words'>{title}</span>
+            <span className='block'>{description}</span>
+          </>
+        }
+        actions={
+          <Link href='/admin/audit' className={cn(buttonVariants({ variant: 'outline' }))}>
+            <ArrowLeft />
+            Back to audit log
+          </Link>
+        }
+      />
       {children}
     </div>
   )
 }
 
 function AuditDetailSkeleton() {
+  return (
+    <div className='space-y-6'>
+      <PageHeaderSkeleton hasActions />
+      <AuditDetailContentSkeleton />
+    </div>
+  )
+}
+
+function AuditDetailContentSkeleton() {
   return (
     <div className='space-y-3'>
       <Skeleton className='h-32 w-full' />

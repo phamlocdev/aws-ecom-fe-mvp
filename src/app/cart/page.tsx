@@ -6,7 +6,8 @@ import { ShoppingBag } from 'lucide-react'
 import { toast } from 'sonner'
 import { CartLineItems } from '@/components/customer/cart-line-items'
 import { ResourceError } from '@/components/resource-error'
-import { Button, buttonVariants } from '@/components/ui/button'
+import { PageHeader } from '@/components/shared/page-header'
+import { buttonVariants } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useActiveCart } from '@/hooks/use-active-cart'
@@ -125,12 +126,7 @@ export default function CartPage() {
   return (
     <div className='grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]'>
       <section className='space-y-4'>
-        <div>
-          <h1 className='text-2xl font-semibold tracking-normal'>Your cart</h1>
-          <p className='mt-1 text-sm text-muted-foreground'>
-            Review items before continuing to checkout.
-          </p>
-        </div>
+        <PageHeader title='Your cart' subtitle='Review items before continuing to checkout.' />
         <CartLineItems
           items={items}
           isPending={isPending}

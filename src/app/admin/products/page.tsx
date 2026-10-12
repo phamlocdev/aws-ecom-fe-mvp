@@ -6,8 +6,10 @@ import { PaginationControls } from '@/components/pagination/pagination-controls'
 import { ProductFiltersDialog } from '@/components/products/product-filters-dialog'
 import { ProductsTable } from '@/components/products/products-table'
 import { ResourceError } from '@/components/resource-error'
+import { PageHeader } from '@/components/shared/page-header'
+import { PageHeaderSkeleton } from '@/components/shared/page-header-skeleton'
+import { TableSkeleton } from '@/components/shared/table-skeleton'
 import { buttonVariants } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useCatalogQueryParams } from '@/hooks/use-catalog-query-params'
 import { useCategoriesQuery } from '@/hooks/use-categories'
 import { useInventoriesQuery } from '@/hooks/use-inventories'
@@ -51,31 +53,34 @@ export default function ProductsPage() {
   )
 
   if (isHydrating || !isAuthenticated) {
-    return <ProductsSkeleton />
+    return (
+      <div className='space-y-6'>
+        <PageHeaderSkeleton hasActions />
+        <ProductsSkeleton />
+      </div>
+    )
   }
 
   return (
     <div className='space-y-6'>
-      <div className='flex flex-col justify-between gap-4 sm:flex-row sm:items-end'>
-        <div>
-          <h1 className='text-2xl font-semibold tracking-normal'>Products</h1>
-          <p className='mt-1 text-sm text-muted-foreground'>
-            Manage product records through the backend `/products` API.
-          </p>
-        </div>
-        <div className='flex flex-col gap-2 sm:flex-row sm:items-center'>
-          <ProductFiltersDialog
-            categories={categories}
-            filters={filters}
-            scannedCount={productsPage?.scannedCount}
-            onApplyFilters={setFilters}
-          />
-          <Link href='/admin/products/new' className={cn(buttonVariants())}>
-            <Plus />
-            New product
-          </Link>
-        </div>
-      </div>
+      <PageHeader
+        title='Products'
+        subtitle='Manage product records through the backend `/products` API.'
+        actions={
+          <>
+            <ProductFiltersDialog
+              categories={categories}
+              filters={filters}
+              scannedCount={productsPage?.scannedCount}
+              onApplyFilters={setFilters}
+            />
+            <Link href='/admin/products/new' className={cn(buttonVariants())}>
+              <Plus />
+              New product
+            </Link>
+          </>
+        }
+      />
 
       {productsError ? (
         <ResourceError
@@ -125,10 +130,5 @@ export default function ProductsPage() {
 }
 
 function ProductsSkeleton() {
-  return (
-    <div className='space-y-3'>
-      <Skeleton className='h-64 w-full' />
-      <Skeleton className='h-14 w-full' />
-    </div>
-  )
+  return <TableSkeleton rows={6} cols={7} />
 }

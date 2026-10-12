@@ -2,16 +2,9 @@
 
 import Link from 'next/link'
 import { ChevronDown, ChevronUp, Eye } from 'lucide-react'
+import { DataTable, type ColumnDef } from '@/components/shared/data-table'
 import { Badge } from '@/components/ui/badge'
 import { buttonVariants } from '@/components/ui/button'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
 import {
   buildAuditValueDiff,
   formatAuditValue,
@@ -27,105 +20,111 @@ import type { AuditFieldChange, AuditLogItem } from '@/lib/types'
 const MAX_CHANGED_FIELD_BADGES = 3
 
 export function AuditLogTable({ items }: { items: AuditLogItem[] }) {
-  if (items.length === 0) {
-    return (
-      <div className='rounded-md border bg-card p-8 text-center'>
-        <p className='font-medium'>No audit entries found</p>
-        <p className='mt-1 text-sm text-muted-foreground'>Try another entity type or entity id.</p>
-      </div>
-    )
-  }
+  const columns: ColumnDef<AuditLogItem>[] = [
+    {
+      id: 'time',
+      header: 'Time',
+      cell: (item) => (
+        <span className='text-sm text-muted-foreground'>{formatDateTime(item.occurredAt)}</span>
+      ),
+    },
+    {
+      id: 'entity',
+      header: 'Entity',
+      cell: (item) => (
+        <div className='min-w-0 space-y-1'>
+          <p className='text-sm font-medium'>{item.entityType}</p>
+          <p className='max-w-64 truncate font-mono text-[11px] text-muted-foreground'>
+            {item.entityId}
+          </p>
+        </div>
+      ),
+    },
+    {
+      id: 'event',
+      header: 'Event',
+      cell: (item) => <AuditEventBadge eventName={item.eventName} />,
+    },
+    {
+      id: 'actor',
+      header: 'Actor',
+      cell: (item) => (
+        <div className='min-w-0 space-y-1'>
+          <p className='text-sm'>{item.actorType}</p>
+          <p className='max-w-48 truncate text-xs text-muted-foreground'>
+            {item.actorEmail ?? item.actorId ?? 'N/A'}
+          </p>
+        </div>
+      ),
+    },
+    {
+      id: 'changedFields',
+      header: 'Changed fields',
+      cell: (item) => {
+        const changedFields = summarizeAuditDiffFields(item.diff)
+        const visibleFields = changedFields.slice(0, MAX_CHANGED_FIELD_BADGES)
+        const hiddenFieldCount = Math.max(changedFields.length - MAX_CHANGED_FIELD_BADGES, 0)
+
+        return (
+          <div className='flex max-w-sm flex-wrap gap-1'>
+            {visibleFields.map((field) => (
+              <Badge
+                key={field.key}
+                variant='secondary'
+                className='max-w-56 truncate'
+                title={field.title}
+              >
+                {field.label}
+              </Badge>
+            ))}
+            {hiddenFieldCount > 0 ? (
+              <Badge
+                variant='outline'
+                title={changedFields
+                  .slice(MAX_CHANGED_FIELD_BADGES)
+                  .map((field) => field.label)
+                  .join('\n')}
+              >
+                +{hiddenFieldCount} more
+              </Badge>
+            ) : null}
+          </div>
+        )
+      },
+    },
+    {
+      id: 'reason',
+      header: 'Reason',
+      cellClassName: 'max-w-64 truncate text-sm text-muted-foreground',
+      cell: (item) => item.reason ?? 'N/A',
+    },
+    {
+      id: 'actions',
+      header: 'Actions',
+      headerClassName: 'w-24 text-right',
+      cell: (item) => (
+        <div className='flex justify-end'>
+          <Link
+            href={buildAuditDetailHref(item)}
+            className={buttonVariants({ variant: 'ghost', size: 'icon-sm' })}
+            title='View audit details'
+            aria-label='View audit details'
+          >
+            <Eye />
+          </Link>
+        </div>
+      ),
+    },
+  ]
 
   return (
-    <div className='overflow-hidden rounded-md border bg-card'>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Time</TableHead>
-            <TableHead>Entity</TableHead>
-            <TableHead>Event</TableHead>
-            <TableHead>Actor</TableHead>
-            <TableHead>Changed fields</TableHead>
-            <TableHead>Reason</TableHead>
-            <TableHead className='w-24 text-right'>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {items.map((item) => {
-            const changedFields = summarizeAuditDiffFields(item.diff)
-            const visibleFields = changedFields.slice(0, MAX_CHANGED_FIELD_BADGES)
-            const hiddenFieldCount = Math.max(changedFields.length - MAX_CHANGED_FIELD_BADGES, 0)
-
-            return (
-              <TableRow key={`${item.entityKey}-${item.occurredAtAuditId}`}>
-                <TableCell className='text-sm text-muted-foreground'>
-                  {formatDateTime(item.occurredAt)}
-                </TableCell>
-                <TableCell>
-                  <div className='min-w-0 space-y-1'>
-                    <p className='text-sm font-medium'>{item.entityType}</p>
-                    <p className='max-w-64 truncate font-mono text-[11px] text-muted-foreground'>
-                      {item.entityId}
-                    </p>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <AuditEventBadge eventName={item.eventName} />
-                </TableCell>
-                <TableCell>
-                  <div className='min-w-0 space-y-1'>
-                    <p className='text-sm'>{item.actorType}</p>
-                    <p className='max-w-48 truncate text-xs text-muted-foreground'>
-                      {item.actorEmail ?? item.actorId ?? 'N/A'}
-                    </p>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className='flex max-w-sm flex-wrap gap-1'>
-                    {visibleFields.map((field) => (
-                      <Badge
-                        key={field.key}
-                        variant='secondary'
-                        className='max-w-56 truncate'
-                        title={field.title}
-                      >
-                        {field.label}
-                      </Badge>
-                    ))}
-                    {hiddenFieldCount > 0 ? (
-                      <Badge
-                        variant='outline'
-                        title={changedFields
-                          .slice(MAX_CHANGED_FIELD_BADGES)
-                          .map((field) => field.label)
-                          .join('\n')}
-                      >
-                        +{hiddenFieldCount} more
-                      </Badge>
-                    ) : null}
-                  </div>
-                </TableCell>
-                <TableCell className='max-w-64 truncate text-sm text-muted-foreground'>
-                  {item.reason ?? 'N/A'}
-                </TableCell>
-                <TableCell>
-                  <div className='flex justify-end'>
-                    <Link
-                      href={buildAuditDetailHref(item)}
-                      className={buttonVariants({ variant: 'ghost', size: 'icon-sm' })}
-                      title='View audit details'
-                      aria-label='View audit details'
-                    >
-                      <Eye />
-                    </Link>
-                  </div>
-                </TableCell>
-              </TableRow>
-            )
-          })}
-        </TableBody>
-      </Table>
-    </div>
+    <DataTable
+      columns={columns}
+      data={items}
+      rowKey={(item) => `${item.entityKey}-${item.occurredAtAuditId}`}
+      emptyTitle='No audit entries found'
+      emptyDescription='Try another entity type or entity id.'
+    />
   )
 }
 

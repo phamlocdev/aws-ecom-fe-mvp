@@ -10,6 +10,13 @@ const optionalDescription = z
   .optional()
   .transform((value) => (value === '' ? undefined : value))
 
+function optionalTrimmedString(max: number) {
+  return z
+    .union([z.string().trim().max(max), z.literal('')])
+    .optional()
+    .transform((value) => (value === '' ? undefined : value))
+}
+
 export const productStatusSchema = z.enum(['ACTIVE', 'INACTIVE'])
 
 export const productImageSchema = z.object({
@@ -34,44 +41,20 @@ export const productFormSchema = z.object({
 })
 
 export const userProfileFormSchema = z.object({
-  name: z
-    .union([z.string().trim().max(120), z.literal('')])
-    .optional()
-    .transform((value) => (value === '' ? undefined : value)),
+  name: optionalTrimmedString(120),
   address: z
     .object({
-      recipientName: z
-        .union([z.string().trim().max(120), z.literal('')])
-        .optional()
-        .transform((value) => (value === '' ? undefined : value)),
-      phone: z
-        .union([z.string().trim().max(40), z.literal('')])
-        .optional()
-        .transform((value) => (value === '' ? undefined : value)),
-      line1: z
-        .union([z.string().trim().max(240), z.literal('')])
-        .optional()
-        .transform((value) => (value === '' ? undefined : value)),
+      recipientName: optionalTrimmedString(120),
+      phone: optionalTrimmedString(40),
+      line1: optionalTrimmedString(240),
       location: z
         .object({
-          ward: z
-            .union([z.string().trim().max(120), z.literal('')])
-            .optional()
-            .transform((value) => (value === '' ? undefined : value)),
-          district: z
-            .union([z.string().trim().max(120), z.literal('')])
-            .optional()
-            .transform((value) => (value === '' ? undefined : value)),
-          city: z
-            .union([z.string().trim().max(120), z.literal('')])
-            .optional()
-            .transform((value) => (value === '' ? undefined : value)),
+          ward: optionalTrimmedString(120),
+          district: optionalTrimmedString(120),
+          city: optionalTrimmedString(120),
         })
         .optional(),
-      notes: z
-        .union([z.string().trim().max(500), z.literal('')])
-        .optional()
-        .transform((value) => (value === '' ? undefined : value)),
+      notes: optionalTrimmedString(500),
     })
     .optional(),
 })
@@ -152,6 +135,14 @@ export const signUpSchema = z
     path: ['confirmPassword'],
   })
 
+export const createManagedAccountSchema = z.object({
+  username: usernameSchema,
+  email: z.string().trim().email('Email must be valid').max(254),
+  password: cognitoPasswordSchema,
+  name: optionalTrimmedString(120),
+  group: z.enum(['customer', 'manager', 'admin']),
+})
+
 export const confirmSignUpSchema = z.object({
   username: z.string().trim().min(1, 'Email or username is required'),
   confirmationCode: z.string().trim().min(1, 'Confirmation code is required'),
@@ -189,6 +180,8 @@ export type InventoryAdjustmentValues = z.output<typeof inventoryAdjustmentSchem
 export type SignInValues = z.output<typeof signInSchema>
 export type SignUpInput = z.input<typeof signUpSchema>
 export type SignUpValues = z.output<typeof signUpSchema>
+export type CreateManagedAccountInput = z.input<typeof createManagedAccountSchema>
+export type CreateManagedAccountValues = z.output<typeof createManagedAccountSchema>
 export type ConfirmSignUpValues = z.output<typeof confirmSignUpSchema>
 export type ForgotPasswordValues = z.output<typeof forgotPasswordSchema>
 export type ConfirmForgotPasswordValues = z.output<typeof confirmForgotPasswordSchema>
