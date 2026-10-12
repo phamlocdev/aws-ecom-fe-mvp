@@ -17,6 +17,7 @@ import { PasswordInput } from '@/components/auth/password-input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
+import { RequiredMark } from '@/components/shared/required-mark'
 
 export function SetSignInPasswordForm() {
   const router = useRouter()
@@ -52,7 +53,7 @@ export function SetSignInPasswordForm() {
         <CardContent>
           <form className='space-y-4' onSubmit={form.handleSubmit(handleSubmit)}>
             <div className='space-y-2'>
-              <Label htmlFor='signInPassword'>Password</Label>
+              <Label htmlFor='signInPassword'>Password<RequiredMark /></Label>
               <PasswordInput
                 id='signInPassword'
                 autoComplete='new-password'
@@ -64,7 +65,7 @@ export function SetSignInPasswordForm() {
               ) : null}
             </div>
             <div className='space-y-2'>
-              <Label htmlFor='confirmSignInPassword'>Confirm password</Label>
+              <Label htmlFor='confirmSignInPassword'>Confirm password<RequiredMark /></Label>
               <PasswordInput
                 id='confirmSignInPassword'
                 autoComplete='new-password'

@@ -20,6 +20,7 @@ import {
   Users,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { ThemeToggle } from '@/components/layout/theme-toggle'
 import { useUserProfileQuery } from '@/hooks/use-user-profile'
 import { getClaimString, useAuthStore } from '@/store/auth-store'
 import { Permission, hasPermission } from '@/lib/permissions'
@@ -272,6 +273,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </div>
             )}
             <div className='flex items-center gap-2'>
+              <ThemeToggle />
               {isCustomerSignedIn ? (
                 <>
                   <Link

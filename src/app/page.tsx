@@ -7,6 +7,7 @@ import {
   type ProductViewMode,
 } from '@/components/products/catalog-product-list'
 import { ResourceError } from '@/components/resource-error'
+import { PageHeader } from '@/components/shared/page-header'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useCatalogQueryParams } from '@/hooks/use-catalog-query-params'
 import { useCategoriesQuery } from '@/hooks/use-categories'
@@ -28,14 +29,10 @@ export default function ProductCatalogPage() {
 
   return (
     <div className='space-y-6'>
-      <div className='flex flex-col justify-between gap-3 sm:flex-row sm:items-end'>
-        <div>
-          <h1 className='text-2xl font-semibold tracking-normal'>Product Catalog</h1>
-          <p className='mt-1 text-sm text-muted-foreground'>
-            Browse products and narrow the catalog with filters.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title='Product Catalog'
+        subtitle='Browse products and narrow the catalog with filters.'
+      />
 
       {productsError ? (
         <ResourceError

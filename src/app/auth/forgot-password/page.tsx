@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { RequiredMark } from '@/components/shared/required-mark'
 
 export default function ForgotPasswordPage() {
   const router = useRouter()
@@ -76,7 +77,7 @@ export default function ForgotPasswordPage() {
           {!codeRequested ? (
             <form className='space-y-4' onSubmit={requestForm.handleSubmit(handleRequestCode)}>
               <div className='space-y-2'>
-                <Label htmlFor='username'>Email or username</Label>
+                <Label htmlFor='username'>Email or username<RequiredMark /></Label>
                 <Input
                   id='username'
                   autoComplete='username'
@@ -97,7 +98,7 @@ export default function ForgotPasswordPage() {
           ) : (
             <form className='space-y-4' onSubmit={confirmForm.handleSubmit(handleConfirm)}>
               <div className='space-y-2'>
-                <Label htmlFor='confirmationCode'>Code</Label>
+                <Label htmlFor='confirmationCode'>Code<RequiredMark /></Label>
                 <Input
                   id='confirmationCode'
                   aria-invalid={Boolean(confirmForm.formState.errors.confirmationCode)}
@@ -110,7 +111,7 @@ export default function ForgotPasswordPage() {
                 ) : null}
               </div>
               <div className='space-y-2'>
-                <Label htmlFor='newPassword'>New password</Label>
+                <Label htmlFor='newPassword'>New password<RequiredMark /></Label>
                 <PasswordInput
                   id='newPassword'
                   autoComplete='new-password'
@@ -124,7 +125,7 @@ export default function ForgotPasswordPage() {
                 ) : null}
               </div>
               <div className='space-y-2'>
-                <Label htmlFor='confirmPassword'>Confirm password</Label>
+                <Label htmlFor='confirmPassword'>Confirm password<RequiredMark /></Label>
                 <PasswordInput
                   id='confirmPassword'
                   autoComplete='new-password'

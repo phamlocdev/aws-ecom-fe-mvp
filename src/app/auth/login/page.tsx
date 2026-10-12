@@ -27,6 +27,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { RequiredMark } from '@/components/shared/required-mark'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -54,7 +55,7 @@ export default function LoginPage() {
     const authErrorToast = readAndClearHostedUiAuthErrorToast()
     if (authErrorToast) {
       toast.error(authErrorToast.message, {
-        description: () => <div className='text-black'>{authErrorToast.description}</div>,
+        description: () => <div className='text-foreground'>{authErrorToast.description}</div>,
       })
     }
   }, [])
@@ -122,7 +123,7 @@ export default function LoginPage() {
             Signing in as <span className='font-medium text-foreground'>{newPasswordUsername}</span>
           </div>
           <div className='space-y-2'>
-            <Label htmlFor='newPassword'>New password</Label>
+            <Label htmlFor='newPassword'>New password<RequiredMark /></Label>
             <PasswordInput
               id='newPassword'
               autoComplete='new-password'
@@ -136,7 +137,7 @@ export default function LoginPage() {
             ) : null}
           </div>
           <div className='space-y-2'>
-            <Label htmlFor='confirmPassword'>Confirm password</Label>
+            <Label htmlFor='confirmPassword'>Confirm password<RequiredMark /></Label>
             <PasswordInput
               id='confirmPassword'
               autoComplete='new-password'
@@ -167,7 +168,7 @@ export default function LoginPage() {
         <>
           <form className='space-y-4' onSubmit={form.handleSubmit(handleSubmit)}>
             <div className='space-y-2'>
-              <Label htmlFor='username'>Email or username</Label>
+              <Label htmlFor='username'>Email or username<RequiredMark /></Label>
               <Input
                 id='username'
                 autoComplete='username'
@@ -179,7 +180,7 @@ export default function LoginPage() {
               ) : null}
             </div>
             <div className='space-y-2'>
-              <Label htmlFor='password'>Password</Label>
+              <Label htmlFor='password'>Password<RequiredMark /></Label>
               <PasswordInput
                 id='password'
                 autoComplete='current-password'

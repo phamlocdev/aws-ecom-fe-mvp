@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { RequiredMark } from '@/components/shared/required-mark'
 
 export default function SignUpPage() {
   const router = useRouter()
@@ -62,7 +63,7 @@ export default function SignUpPage() {
         <CardContent className='space-y-4'>
           <form className='space-y-4' onSubmit={form.handleSubmit(handleSubmit)}>
             <div className='space-y-2'>
-              <Label htmlFor='username'>Username</Label>
+              <Label htmlFor='username'>Username<RequiredMark /></Label>
               <Input
                 id='username'
                 autoComplete='username'
@@ -74,7 +75,7 @@ export default function SignUpPage() {
               ) : null}
             </div>
             <div className='space-y-2'>
-              <Label htmlFor='email'>Email</Label>
+              <Label htmlFor='email'>Email<RequiredMark /></Label>
               <Input
                 id='email'
                 type='email'
@@ -87,7 +88,7 @@ export default function SignUpPage() {
               ) : null}
             </div>
             <div className='space-y-2'>
-              <Label htmlFor='password'>Password</Label>
+              <Label htmlFor='password'>Password<RequiredMark /></Label>
               <PasswordInput
                 id='password'
                 autoComplete='new-password'
@@ -99,7 +100,7 @@ export default function SignUpPage() {
               ) : null}
             </div>
             <div className='space-y-2'>
-              <Label htmlFor='confirmPassword'>Confirm password</Label>
+              <Label htmlFor='confirmPassword'>Confirm password<RequiredMark /></Label>
               <PasswordInput
                 id='confirmPassword'
                 autoComplete='new-password'

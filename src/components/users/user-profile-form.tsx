@@ -22,6 +22,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ResourceError } from '@/components/resource-error'
+import { PageHeader } from '@/components/shared/page-header'
 import { Skeleton } from '@/components/ui/skeleton'
 
 export function UserProfileForm({
@@ -190,10 +191,7 @@ export function UserProfileForm({
 
   return (
     <div className='mx-auto max-w-3xl space-y-6'>
-      <div>
-        <h1 className='text-2xl font-semibold tracking-normal'>{title}</h1>
-        <p className='mt-1 text-sm text-muted-foreground'>Manage your account profile.</p>
-      </div>
+      <PageHeader title={title} subtitle='Manage your account profile.' />
 
       <form
         className='grid gap-6 rounded-md border bg-card p-4'

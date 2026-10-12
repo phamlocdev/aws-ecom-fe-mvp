@@ -1,3 +1,5 @@
+import type { VariantProps } from 'class-variance-authority'
+import type { badgeVariants } from '@/components/ui/badge'
 import type { InventoryStockStatus } from '@/lib/types'
 
 export const LOW_STOCK_THRESHOLD = 5
@@ -22,5 +24,18 @@ export function getInventoryStockLabel(status: InventoryStockStatus): string {
       return 'Low stock'
     default:
       return 'In stock'
+  }
+}
+
+export function getInventoryStockBadgeVariant(
+  status: InventoryStockStatus,
+): NonNullable<VariantProps<typeof badgeVariants>['variant']> {
+  switch (status) {
+    case 'OUT_OF_STOCK':
+      return 'destructive'
+    case 'LOW_STOCK':
+      return 'secondary'
+    default:
+      return 'outline'
   }
 }

@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { RequiredMark } from '@/components/shared/required-mark'
 
 export default function ConfirmSignUpPage() {
   const router = useRouter()
@@ -88,7 +89,7 @@ export default function ConfirmSignUpPage() {
         <CardContent className='space-y-4'>
           <form className='space-y-4' onSubmit={form.handleSubmit(handleSubmit)}>
             <div className='space-y-2'>
-              <Label htmlFor='username'>Username</Label>
+              <Label htmlFor='username'>Username<RequiredMark /></Label>
               <Input
                 id='username'
                 autoComplete='username'
@@ -100,7 +101,7 @@ export default function ConfirmSignUpPage() {
               ) : null}
             </div>
             <div className='space-y-2'>
-              <Label htmlFor='confirmationCode'>Code</Label>
+              <Label htmlFor='confirmationCode'>Code<RequiredMark /></Label>
               <Input
                 id='confirmationCode'
                 aria-invalid={Boolean(form.formState.errors.confirmationCode)}

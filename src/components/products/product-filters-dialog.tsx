@@ -4,6 +4,13 @@ import { useEffect, useMemo, useState } from 'react'
 import { SlidersHorizontal } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Category, ProductFilterParams, ProductStatus } from '@/lib/types'
+import {
+  countActiveFilters,
+  localDateEndIso,
+  localDateStartIso,
+  parsePositiveInteger,
+  toLocalDateInput,
+} from '@/lib/filter-dates'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -102,8 +109,8 @@ export function ProductFiltersDialog({
 
   function handlePriceRangeChange(field: 'minPrice' | 'maxPrice', value: number): void {
     updateDraft((current) => {
-      const currentMin = readPrice(current.minPrice) ?? PRICE_SLIDER_MIN
-      const currentMax = readPrice(current.maxPrice) ?? PRICE_SLIDER_MAX
+      const currentMin = parsePositiveInteger(current.minPrice) ?? PRICE_SLIDER_MIN
+      const currentMax = parsePositiveInteger(current.maxPrice) ?? PRICE_SLIDER_MAX
       if (field === 'minPrice') {
         return { ...current, minPrice: String(Math.min(value, currentMax)) }
       }
@@ -140,12 +147,12 @@ export function ProductFiltersDialog({
   }
 
   const minSliderValue = clamp(
-    readPrice(draft.minPrice) ?? PRICE_SLIDER_MIN,
+    parsePositiveInteger(draft.minPrice) ?? PRICE_SLIDER_MIN,
     PRICE_SLIDER_MIN,
     PRICE_SLIDER_MAX,
   )
   const maxSliderValue = clamp(
-    readPrice(draft.maxPrice) ?? PRICE_SLIDER_MAX,
+    parsePositiveInteger(draft.maxPrice) ?? PRICE_SLIDER_MAX,
     PRICE_SLIDER_MIN,
     PRICE_SLIDER_MAX,
   )
@@ -436,8 +443,8 @@ function createFiltersFromDraft(draft: FilterDraft): DraftResult {
     filters.status = draft.status
   }
   if (draft.enabled.price) {
-    const minPrice = draft.minPrice ? readPrice(draft.minPrice) : undefined
-    const maxPrice = draft.maxPrice ? readPrice(draft.maxPrice) : undefined
+    const minPrice = draft.minPrice ? parsePositiveInteger(draft.minPrice) : undefined
+    const maxPrice = draft.maxPrice ? parsePositiveInteger(draft.maxPrice) : undefined
     if (draft.minPrice && minPrice === undefined) {
       return { filters, error: 'Minimum price must be an integer greater than 0.' }
     }
@@ -505,45 +512,8 @@ function createFilterKey(filters: ProductFilterParams): string {
   return params.toString()
 }
 
-function countActiveFilters(filters: ProductFilterParams): number {
-  return [
-    filters.categoryId,
-    filters.status,
-    filters.minPrice !== undefined || filters.maxPrice !== undefined ? 'price' : undefined,
-    filters.updatedFrom || filters.updatedTo ? 'updated' : undefined,
-    filters.q,
-  ].filter((value) => value !== undefined && value !== '').length
-}
-
-function readPrice(value: string): number | undefined {
-  const parsed = Number(value)
-  return Number.isInteger(parsed) && parsed >= 1 ? parsed : undefined
-}
-
 function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max)
-}
-
-function toLocalDateInput(value: string): string {
-  const date = new Date(value)
-  if (!Number.isFinite(date.getTime())) {
-    return ''
-  }
-
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
-}
-
-function localDateStartIso(value: string): string {
-  const [year, month, day] = value.split('-').map(Number)
-  return new Date(year, month - 1, day, 0, 0, 0, 0).toISOString()
-}
-
-function localDateEndIso(value: string): string {
-  const [year, month, day] = value.split('-').map(Number)
-  return new Date(year, month - 1, day, 23, 59, 59, 999).toISOString()
 }
 
 function getUpdatedPresetRange(preset: Exclude<UpdatedPreset, 'custom'>): {

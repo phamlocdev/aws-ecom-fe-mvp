@@ -5,6 +5,9 @@ import type { FormEvent } from 'react'
 import { Search } from 'lucide-react'
 import { AuditLogTable } from '@/components/audit/audit-log-table'
 import { ResourceError } from '@/components/resource-error'
+import { PageHeader } from '@/components/shared/page-header'
+import { PageHeaderSkeleton } from '@/components/shared/page-header-skeleton'
+import { TableSkeleton } from '@/components/shared/table-skeleton'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -15,7 +18,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useAuditLogQuery } from '@/hooks/use-audit-log'
 import { useRequireAuth } from '@/hooks/use-require-auth'
 import { toApiClientError } from '@/lib/api/errors'
@@ -92,17 +94,20 @@ export default function AdminAuditPage() {
   }
 
   if (isHydrating || !isAuthenticated) {
-    return <AuditSkeleton />
+    return (
+      <div className='space-y-6'>
+        <PageHeaderSkeleton />
+        <AuditSkeleton />
+      </div>
+    )
   }
 
   return (
     <div className='space-y-6'>
-      <div>
-        <h1 className='text-2xl font-semibold tracking-normal'>Audit log</h1>
-        <p className='mt-1 text-sm text-muted-foreground'>
-          Review changes captured from audited DynamoDB tables.
-        </p>
-      </div>
+      <PageHeader
+        title='Audit log'
+        subtitle='Review changes captured from audited DynamoDB tables.'
+      />
 
       <form
         className='grid gap-3 rounded-md border bg-card p-4 lg:grid-cols-[220px_1fr_160px_auto]'
@@ -199,10 +204,5 @@ export default function AdminAuditPage() {
 }
 
 function AuditSkeleton() {
-  return (
-    <div className='space-y-3'>
-      <Skeleton className='h-64 w-full' />
-      <Skeleton className='h-14 w-full' />
-    </div>
-  )
+  return <TableSkeleton rows={6} cols={7} />
 }

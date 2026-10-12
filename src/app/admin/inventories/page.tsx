@@ -4,9 +4,11 @@ import { useState } from 'react'
 import { PaginationControls } from '@/components/pagination/pagination-controls'
 import { InventoriesTable } from '@/components/inventories/inventories-table'
 import { ResourceError } from '@/components/resource-error'
+import { PageHeader } from '@/components/shared/page-header'
+import { PageHeaderSkeleton } from '@/components/shared/page-header-skeleton'
+import { TableSkeleton } from '@/components/shared/table-skeleton'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Skeleton } from '@/components/ui/skeleton'
 import {
   Select,
   SelectContent,
@@ -40,7 +42,12 @@ export default function InventoriesPage() {
   const categoriesError = categoriesResult.error ? toApiClientError(categoriesResult.error) : null
 
   if (isHydrating || !isAuthenticated) {
-    return <InventoriesSkeleton />
+    return (
+      <div className='space-y-6'>
+        <PageHeaderSkeleton />
+        <InventoriesSkeleton />
+      </div>
+    )
   }
 
   function applyFilters() {
@@ -57,14 +64,10 @@ export default function InventoriesPage() {
 
   return (
     <div className='space-y-6'>
-      <div className='flex flex-col justify-between gap-4 sm:flex-row sm:items-end'>
-        <div>
-          <h1 className='text-2xl font-semibold tracking-normal'>Inventories</h1>
-          <p className='mt-1 text-sm text-muted-foreground'>
-            Monitor stock levels and adjust available quantities through the backend `/inventories` API.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title='Inventories'
+        subtitle='Monitor stock levels and adjust available quantities through the backend `/inventories` API.'
+      />
 
       <div className='grid gap-3 rounded-md border bg-card p-4 md:grid-cols-[minmax(0,1fr)_180px_auto_auto]'>
         <Input
@@ -140,10 +143,5 @@ export default function InventoriesPage() {
 }
 
 function InventoriesSkeleton() {
-  return (
-    <div className='space-y-3'>
-      <Skeleton className='h-64 w-full' />
-      <Skeleton className='h-14 w-full' />
-    </div>
-  )
+  return <TableSkeleton rows={6} cols={7} />
 }

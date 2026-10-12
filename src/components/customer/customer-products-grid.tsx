@@ -20,7 +20,7 @@ export function CustomerProductsGrid({
 
   if (products.length === 0) {
     return (
-      <div className='rounded-[2rem] border bg-white/85 p-10 text-center shadow-sm'>
+      <div className='rounded-[2rem] border bg-card/85 p-10 text-center shadow-sm'>
         <p className='text-lg font-semibold'>No products match your filters</p>
         <p className='mt-2 text-sm text-muted-foreground'>
           Try widening the price range or removing the keyword/category filter.
@@ -38,7 +38,7 @@ export function CustomerProductsGrid({
         return (
           <article
             key={product.productId}
-            className='group overflow-hidden rounded-[1.75rem] border bg-white/88 shadow-sm transition-transform duration-200 hover:-translate-y-1'
+            className='group overflow-hidden rounded-[1.75rem] border bg-card/88 shadow-sm transition-transform duration-200 hover:-translate-y-1'
           >
             <div className='relative aspect-[4/3] overflow-hidden bg-[linear-gradient(135deg,_rgba(245,158,11,0.2),_rgba(15,23,42,0.04))]'>
               {imageSrc ? (

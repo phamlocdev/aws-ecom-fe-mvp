@@ -2,15 +2,16 @@
 
 import Link from 'next/link'
 import { useParams, usePathname, useRouter } from 'next/navigation'
-import { ArrowLeft, Check, Save } from 'lucide-react'
+import { ArrowLeft, Check, ChevronDown, ChevronUp, Save } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { ResourceError } from '@/components/resource-error'
+import { PageHeader } from '@/components/shared/page-header'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useUpdateUserPermissionsMutation, useUsersQuery } from '@/hooks/use-user-profile'
+import { useUpdateUserPermissionsMutation, useUsersQuery } from '@/hooks/use-managed-users'
 import { toApiClientError } from '@/lib/api/errors'
 import { Permission } from '@/lib/permissions'
 import { resolveDynamicRouteSegment } from '@/lib/routing'
@@ -170,12 +171,7 @@ export function UserAccessPage() {
 
   return (
     <div className='min-h-[calc(100vh-7rem)] space-y-6'>
-      <div className='space-y-1'>
-        <div className='text-xs text-muted-foreground'>
-          Settings <span className='px-1'>/</span> User & access
-        </div>
-        <h1 className='text-2xl font-semibold tracking-normal'>Edit user access</h1>
-      </div>
+      <PageHeader title='Edit user access' />
 
       <section className='space-y-5 border-t pt-5'>
         <h2 className='text-sm font-semibold'>General Info</h2>
@@ -188,12 +184,9 @@ export function UserAccessPage() {
       <section className='space-y-4 border-t pt-5'>
         <div>
           <h2 className='text-sm font-semibold'>Role & access</h2>
-          <div className='mt-4 inline-flex rounded-md border bg-muted p-1'>
-            <span className='rounded px-3 py-1.5 text-xs text-muted-foreground'>Default role</span>
-            <span className='rounded bg-background px-3 py-1.5 text-xs font-medium shadow-sm'>
-              Custom role
-            </span>
-          </div>
+          <p className='mt-2 text-xs text-muted-foreground'>
+            Permissions are set individually per account below.
+          </p>
         </div>
 
         <PermissionMatrix
@@ -212,11 +205,7 @@ export function UserAccessPage() {
           <Button type='button' variant='outline' onClick={() => router.push('/admin/users')}>
             Cancel
           </Button>
-          <Button
-            type='button'
-            disabled={updatePermissionsMutation.isLoading}
-            onClick={handleSave}
-          >
+          <Button type='button' disabled={updatePermissionsMutation.isLoading} onClick={handleSave}>
             <Save />
             Save
           </Button>
@@ -229,9 +218,7 @@ export function UserAccessPage() {
 function ReadOnlyField({ label, value }: { label: string; value: string }) {
   return (
     <div className='grid gap-2'>
-      <Label>
-        {label} <span className='text-destructive'>*</span>
-      </Label>
+      <Label>{label}</Label>
       <Input value={value} readOnly />
     </div>
   )
@@ -247,68 +234,137 @@ function PermissionMatrix({
   onToggle: (permission: PermissionValue) => void
 }) {
   return (
-    <div className='overflow-x-auto rounded-md border bg-card'>
-      <div className='min-w-[44rem]'>
-        <div className='grid grid-cols-[minmax(11rem,2fr)_repeat(4,minmax(6rem,1fr))] border-b bg-muted/30 text-sm font-medium'>
-          <div className='flex items-center gap-2 border-r p-3'>
-            <span className='flex size-4 items-center justify-center rounded bg-foreground text-[10px] text-background'>
-              -
-            </span>
-            Module
-          </div>
-          {actionColumns.map((column) => (
-            <div key={column.key} className='flex items-center gap-2 border-r p-3 last:border-r-0'>
+    <>
+      <div
+        role='grid'
+        aria-label='Permission matrix'
+        className='hidden overflow-x-auto rounded-md border bg-card sm:block'
+      >
+        <div className='min-w-[44rem]'>
+          <div
+            role='row'
+            className='grid grid-cols-[minmax(11rem,2fr)_repeat(4,minmax(6rem,1fr))] border-b bg-muted/30 text-sm font-medium'
+          >
+            <div role='columnheader' className='flex items-center gap-2 border-r p-3'>
               <span className='flex size-4 items-center justify-center rounded bg-foreground text-[10px] text-background'>
                 -
               </span>
-              {column.label}
+              Module
+            </div>
+            {actionColumns.map((column) => (
+              <div
+                key={column.key}
+                role='columnheader'
+                className='flex items-center gap-2 border-r p-3 last:border-r-0'
+              >
+                <span className='flex size-4 items-center justify-center rounded bg-foreground text-[10px] text-background'>
+                  -
+                </span>
+                {column.label}
+              </div>
+            ))}
+          </div>
+          {permissionRows.map((row) => (
+            <div
+              key={row.module}
+              role='row'
+              className='grid grid-cols-[minmax(11rem,2fr)_repeat(4,minmax(6rem,1fr))] border-b text-sm last:border-b-0'
+            >
+              <div role='gridcell' className='flex items-center gap-3 border-r p-3'>
+                <ModuleCheckbox
+                  module={row.module}
+                  permissions={Object.values(row.permissions)}
+                  selectedPermissions={selectedPermissions}
+                  disabled={disabled}
+                  onToggle={onToggle}
+                />
+                <span>{row.module}</span>
+              </div>
+              {actionColumns.map((column) => {
+                const permission = row.permissions[column.key]
+                return (
+                  <div
+                    key={column.key}
+                    role='gridcell'
+                    className='flex items-center border-r p-3 last:border-r-0'
+                  >
+                    {permission ? (
+                      <PermissionCheckbox
+                        module={row.module}
+                        label={column.label}
+                        permission={permission}
+                        checked={selectedPermissions.has(permission)}
+                        disabled={disabled}
+                        onToggle={onToggle}
+                      />
+                    ) : (
+                      <span className='size-4 rounded border bg-muted/30' />
+                    )}
+                  </div>
+                )
+              })}
             </div>
           ))}
         </div>
+      </div>
+
+      <div className='space-y-2 sm:hidden'>
         {permissionRows.map((row) => (
-          <div
-            key={row.module}
-            className='grid grid-cols-[minmax(11rem,2fr)_repeat(4,minmax(6rem,1fr))] border-b text-sm last:border-b-0'
-          >
-            <div className='flex items-center gap-3 border-r p-3'>
-              <ModuleCheckbox
-                permissions={Object.values(row.permissions)}
-                selectedPermissions={selectedPermissions}
-                disabled={disabled}
-                onToggle={onToggle}
-              />
-              <span>{row.module}</span>
-            </div>
-            {actionColumns.map((column) => {
-              const permission = row.permissions[column.key]
-              return (
-                <div key={column.key} className='flex items-center border-r p-3 last:border-r-0'>
-                  {permission ? (
+          <details key={row.module} className='group rounded-md border bg-card'>
+            <summary className='flex cursor-pointer list-none items-center justify-between gap-2 p-3 text-sm font-medium'>
+              <span className='flex items-center gap-3'>
+                <ModuleCheckbox
+                  module={row.module}
+                  permissions={Object.values(row.permissions)}
+                  selectedPermissions={selectedPermissions}
+                  disabled={disabled}
+                  onToggle={onToggle}
+                />
+                {row.module}
+              </span>
+              <ChevronDown className='size-4 text-muted-foreground group-open:hidden' />
+              <ChevronUp className='hidden size-4 text-muted-foreground group-open:block' />
+            </summary>
+            <div className='space-y-2 border-t p-3'>
+              {actionColumns.map((column) => {
+                const permission = row.permissions[column.key]
+                if (!permission) {
+                  return null
+                }
+
+                return (
+                  <label
+                    key={column.key}
+                    className='flex items-center justify-between gap-3 text-sm'
+                  >
+                    <span>{column.label}</span>
                     <PermissionCheckbox
+                      module={row.module}
+                      label={column.label}
                       permission={permission}
                       checked={selectedPermissions.has(permission)}
                       disabled={disabled}
                       onToggle={onToggle}
                     />
-                  ) : (
-                    <span className='size-4 rounded border bg-muted/30' />
-                  )}
-                </div>
-              )
-            })}
-          </div>
+                  </label>
+                )
+              })}
+            </div>
+          </details>
         ))}
       </div>
-    </div>
+    </>
   )
 }
 
 function ModuleCheckbox({
+  module,
   permissions,
   selectedPermissions,
   disabled,
   onToggle,
 }: {
+  module: string
   permissions: Array<PermissionValue | undefined>
   selectedPermissions: Set<PermissionValue>
   disabled: boolean
@@ -332,6 +388,7 @@ function ModuleCheckbox({
 
   return (
     <MatrixCheckbox
+      label={`${module}: all permissions`}
       checked={isChecked}
       disabled={disabled || availablePermissions.length === 0}
       onChange={handleToggle}
@@ -340,26 +397,37 @@ function ModuleCheckbox({
 }
 
 function PermissionCheckbox({
+  module,
+  label,
   permission,
   checked,
   disabled,
   onToggle,
 }: {
+  module: string
+  label: string
   permission: PermissionValue
   checked: boolean
   disabled: boolean
   onToggle: (permission: PermissionValue) => void
 }) {
   return (
-    <MatrixCheckbox checked={checked} disabled={disabled} onChange={() => onToggle(permission)} />
+    <MatrixCheckbox
+      label={`${module}: ${label}`}
+      checked={checked}
+      disabled={disabled}
+      onChange={() => onToggle(permission)}
+    />
   )
 }
 
 function MatrixCheckbox({
+  label,
   checked,
   disabled,
   onChange,
 }: {
+  label: string
   checked: boolean
   disabled: boolean
   onChange: () => void
@@ -369,6 +437,7 @@ function MatrixCheckbox({
       type='button'
       disabled={disabled}
       aria-pressed={checked}
+      aria-label={label}
       onClick={onChange}
       className={cn(
         'relative flex size-4 items-center justify-center overflow-hidden rounded border text-[11px] transition-colors',

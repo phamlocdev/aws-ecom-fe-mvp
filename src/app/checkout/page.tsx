@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { CartLineItems } from '@/components/customer/cart-line-items'
 import { ResourceError } from '@/components/resource-error'
+import { PageHeader } from '@/components/shared/page-header'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
@@ -24,6 +25,9 @@ export default function CheckoutPage() {
   const { isAuthenticated, isHydrating } = useRequireAuth()
   const { activeCartId, isHydrated: isCartHydrated, clearActiveCart } = useActiveCart()
   const [additionalReceivingEmailsInput, setAdditionalReceivingEmailsInput] = useState('')
+  const [additionalReceivingEmailsError, setAdditionalReceivingEmailsError] = useState<
+    string | null
+  >(null)
   const cartResult = useCartQuery(activeCartId, isAuthenticated && isCartHydrated)
   const placeOrderMutation = usePlaceOrderMutation()
   const cartError = cartResult.error ? toApiClientError(cartResult.error) : null
@@ -91,14 +95,15 @@ export default function CheckoutPage() {
       return
     }
 
+    setAdditionalReceivingEmailsError(null)
     const additionalReceivingEmails = parseAdditionalReceivingEmails(additionalReceivingEmailsInput)
     if (additionalReceivingEmails.invalidEmails.length > 0) {
-      toast.error(`Invalid email: ${additionalReceivingEmails.invalidEmails[0]}`)
+      setAdditionalReceivingEmailsError(`Invalid email: ${additionalReceivingEmails.invalidEmails[0]}`)
       return
     }
 
     if (additionalReceivingEmails.emails.length > 49) {
-      toast.error('You can add up to 49 additional receiving emails.')
+      setAdditionalReceivingEmailsError('You can add up to 49 additional receiving emails.')
       return
     }
 
@@ -121,12 +126,10 @@ export default function CheckoutPage() {
   return (
     <div className='grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]'>
       <section className='space-y-4'>
-        <div>
-          <h1 className='text-2xl font-semibold tracking-normal'>Checkout</h1>
-          <p className='mt-1 text-sm text-muted-foreground'>
-            Place the order first, then continue to the payment-mocking step.
-          </p>
-        </div>
+        <PageHeader
+          title='Checkout'
+          subtitle='Place the order first, then continue to the payment-mocking step.'
+        />
         <CartLineItems
           items={items}
           isPending
@@ -155,15 +158,22 @@ export default function CheckoutPage() {
               <Textarea
                 id='additionalReceivingEmails'
                 value={additionalReceivingEmailsInput}
-                onChange={(event) => setAdditionalReceivingEmailsInput(event.target.value)}
+                onChange={(event) => {
+                  setAdditionalReceivingEmailsInput(event.target.value)
+                  setAdditionalReceivingEmailsError(null)
+                }}
                 placeholder='a@gmail.com, b@gmail.com'
-                rows={20}
                 className='h-40'
+                aria-invalid={Boolean(additionalReceivingEmailsError)}
                 disabled={placeOrderMutation.isLoading}
               />
-              <p className='text-xs text-muted-foreground'>
-                Separate multiple recipients with commas.
-              </p>
+              {additionalReceivingEmailsError ? (
+                <p className='text-xs text-destructive'>{additionalReceivingEmailsError}</p>
+              ) : (
+                <p className='text-xs text-muted-foreground'>
+                  Separate multiple recipients with commas.
+                </p>
+              )}
             </div>
           </CardContent>
           <CardFooter className='flex-col gap-3'>

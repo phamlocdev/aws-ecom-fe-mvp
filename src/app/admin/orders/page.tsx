@@ -6,7 +6,8 @@ import { EmailStatisticsCards } from '@/components/email/email-statistics-cards'
 import { AdminOrdersTable } from '@/components/orders/admin-orders-table'
 import { PaginationControls } from '@/components/pagination/pagination-controls'
 import { ResourceError } from '@/components/resource-error'
-import { Skeleton } from '@/components/ui/skeleton'
+import { PageHeader } from '@/components/shared/page-header'
+import { TableSkeleton } from '@/components/shared/table-skeleton'
 import { useCatalogQueryParams } from '@/hooks/use-catalog-query-params'
 import {
   useOrderEmailStatisticsQuery,
@@ -48,14 +49,7 @@ export default function AdminOrdersPage() {
 
   return (
     <div className='space-y-6'>
-      <div className='flex flex-col justify-between gap-4 sm:flex-row sm:items-end'>
-        <div>
-          <h1 className='text-2xl font-semibold tracking-normal'>Orders</h1>
-          <p className='mt-1 text-sm text-muted-foreground'>
-            Manage order status and customer email delivery.
-          </p>
-        </div>
-      </div>
+      <PageHeader title='Orders' subtitle='Manage order status and customer email delivery.' />
 
       {ordersError ? (
         <ResourceError
@@ -103,10 +97,5 @@ export default function AdminOrdersPage() {
 }
 
 function OrdersSkeleton() {
-  return (
-    <div className='space-y-3'>
-      <Skeleton className='h-64 w-full' />
-      <Skeleton className='h-14 w-full' />
-    </div>
-  )
+  return <TableSkeleton rows={6} cols={7} />
 }

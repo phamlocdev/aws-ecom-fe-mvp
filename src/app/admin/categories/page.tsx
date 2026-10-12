@@ -4,7 +4,9 @@ import { CategoriesTable } from '@/components/categories/categories-table'
 import { CategoryFormDialog } from '@/components/categories/category-form-dialog'
 import { PaginationControls } from '@/components/pagination/pagination-controls'
 import { ResourceError } from '@/components/resource-error'
-import { Skeleton } from '@/components/ui/skeleton'
+import { PageHeader } from '@/components/shared/page-header'
+import { PageHeaderSkeleton } from '@/components/shared/page-header-skeleton'
+import { TableSkeleton } from '@/components/shared/table-skeleton'
 import { useCatalogQueryParams } from '@/hooks/use-catalog-query-params'
 import { useCategoriesQuery } from '@/hooks/use-categories'
 import { useRequireAuth } from '@/hooks/use-require-auth'
@@ -27,20 +29,21 @@ export default function CategoriesPage() {
   const error = categoriesResult.error ? toApiClientError(categoriesResult.error) : null
 
   if (isHydrating || !isAuthenticated) {
-    return <CategoriesSkeleton />
+    return (
+      <div className='space-y-6'>
+        <PageHeaderSkeleton hasActions />
+        <CategoriesSkeleton />
+      </div>
+    )
   }
 
   return (
     <div className='space-y-6'>
-      <div className='flex flex-col justify-between gap-4 sm:flex-row sm:items-end'>
-        <div>
-          <h1 className='text-2xl font-semibold tracking-normal'>Categories</h1>
-          <p className='mt-1 text-sm text-muted-foreground'>
-            Manage stable category slugs through the backend `/categories` API.
-          </p>
-        </div>
-        <CategoryFormDialog />
-      </div>
+      <PageHeader
+        title='Categories'
+        subtitle='Manage stable category slugs through the backend `/categories` API.'
+        actions={<CategoryFormDialog />}
+      />
 
       {error ? (
         <ResourceError
@@ -72,10 +75,5 @@ export default function CategoriesPage() {
 }
 
 function CategoriesSkeleton() {
-  return (
-    <div className='space-y-3'>
-      <Skeleton className='h-48 w-full' />
-      <Skeleton className='h-14 w-full' />
-    </div>
-  )
+  return <TableSkeleton rows={5} cols={5} />
 }
