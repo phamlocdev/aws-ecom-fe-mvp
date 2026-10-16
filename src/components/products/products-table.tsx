@@ -11,19 +11,15 @@ import {
   getInventoryStockStatus,
 } from '@/lib/inventory'
 import { getProductImageSrc } from '@/lib/product-images'
-import type { Category, InventorySummary, Product } from '@/lib/types'
+import type { InventorySummary, Product } from '@/lib/types'
 
 export function ProductsTable({
   products,
-  categories,
   inventoryByProductId,
 }: {
   products: Product[]
-  categories: Category[]
   inventoryByProductId?: Map<string, InventorySummary>
 }) {
-  const categoryNames = new Map(categories.map((category) => [category.categoryId, category.name]))
-
   const columns: ColumnDef<Product>[] = [
     {
       id: 'product',
@@ -52,7 +48,7 @@ export function ProductsTable({
       header: 'Category',
       cell: (product) => (
         <div className='space-y-1'>
-          <p className='text-sm'>{categoryNames.get(product.categoryId) ?? product.categoryId}</p>
+          <p className='text-sm'>{product.category?.name ?? product.categoryId}</p>
           <p className='font-mono text-[11px] text-muted-foreground'>{product.categoryId}</p>
         </div>
       ),

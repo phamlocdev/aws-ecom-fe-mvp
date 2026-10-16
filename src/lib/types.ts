@@ -39,11 +39,17 @@ export type UserAddress = {
   notes?: string
 }
 
+export type ProductCategorySummary = {
+  categoryId: string
+  name: string
+}
+
 export type Product = {
   productId: string
   name: string
   description: string
   categoryId: string
+  category?: ProductCategorySummary
   price: number
   currency: string
   imageUrl?: string

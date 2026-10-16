@@ -108,11 +108,7 @@ export default function ProductsPage() {
         <ProductsSkeleton />
       ) : !productsError ? (
         <>
-          <ProductsTable
-            products={products}
-            categories={categories}
-            inventoryByProductId={inventoryByProductId}
-          />
+          <ProductsTable products={products} inventoryByProductId={inventoryByProductId} />
           {productsPage ? (
             <PaginationControls
               limit={productsPage.limit}
