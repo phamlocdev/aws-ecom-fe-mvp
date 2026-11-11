@@ -41,7 +41,7 @@ export function CatalogProductList({
   onViewModeChange,
   onViewMore,
 }: CatalogProductListProps) {
-  const categoryNames = new Map(categories.map((category) => [category.categoryId, category.name]))
+  const categoryNames = new Map(categories.map((category) => [category.id, category.name]))
 
   return (
     <section className='space-y-4'>
@@ -87,7 +87,7 @@ export function CatalogProductList({
         >
           {products.map((product) => (
             <ProductCard
-              key={product.productId}
+              key={product.id}
               product={product}
               categoryName={categoryNames.get(product.categoryId) ?? product.categoryId}
               viewMode={viewMode}
@@ -127,7 +127,7 @@ function ProductCard({
       )}
     >
       <Link
-        href={`/products/${product.productId}`}
+        href={`/products/${product.id}`}
         className={cn(
           'block overflow-hidden bg-muted',
           viewMode === 'row' ? 'aspect-[4/3] rounded-md' : 'aspect-[4/3]',
@@ -150,7 +150,7 @@ function ProductCard({
       >
         <div className='space-y-2'>
           <div className='flex items-start justify-between gap-3'>
-            <Link href={`/products/${product.productId}`} className='min-w-0'>
+            <Link href={`/products/${product.id}`} className='min-w-0'>
               <h3 className='line-clamp-2 text-base font-semibold hover:text-primary'>
                 {product.name}
               </h3>
@@ -165,7 +165,7 @@ function ProductCard({
         <div className='mt-auto flex items-center justify-between gap-3'>
           <p className='text-lg font-semibold'>{formatVnd(product.price)}</p>
           <Link
-            href={`/products/${product.productId}`}
+            href={`/products/${product.id}`}
             className={cn(buttonVariants({ size: 'sm' }))}
           >
             <ShoppingCart />

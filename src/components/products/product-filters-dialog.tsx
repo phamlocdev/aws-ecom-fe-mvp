@@ -213,7 +213,7 @@ export function ProductFiltersDialog({
                   <SelectContent>
                     <SelectItem value={ANY_VALUE}>All categories</SelectItem>
                     {categories.map((category) => (
-                      <SelectItem key={category.categoryId} value={category.categoryId}>
+                      <SelectItem key={category.id} value={category.id}>
                         {category.name}
                       </SelectItem>
                     ))}

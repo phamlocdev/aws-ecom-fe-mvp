@@ -16,7 +16,7 @@ export function CategoriesTable({ categories }: { categories: Category[] }) {
       id: 'categoryId',
       header: 'Category ID',
       cellClassName: 'font-mono text-xs text-muted-foreground',
-      cell: (category) => category.categoryId,
+      cell: (category) => category.id,
     },
     {
       id: 'description',
@@ -52,7 +52,7 @@ export function CategoriesTable({ categories }: { categories: Category[] }) {
     <DataTable
       columns={columns}
       data={categories}
-      rowKey={(category) => category.categoryId}
+      rowKey={(category) => category.id}
       emptyTitle='No categories yet'
       emptyDescription='Create a category before adding products.'
     />

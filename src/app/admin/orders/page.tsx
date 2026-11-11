@@ -36,9 +36,9 @@ export default function AdminOrdersPage() {
       return
     }
 
-    setUpdatingOrderId(order.orderId)
+    setUpdatingOrderId(order.id)
     try {
-      await updateStatusMutation.mutateAsync({ orderId: order.orderId, status })
+      await updateStatusMutation.mutateAsync({ orderId: order.id, status })
       toast.success('Order marked as shipped.')
     } catch (error) {
       toast.error(toApiClientError(error).message)

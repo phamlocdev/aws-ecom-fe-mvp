@@ -85,9 +85,9 @@ export function useUpdateOrderStatusMutation() {
       onSuccess: async (order) => {
         await Promise.all([
           queryClient.invalidateQueries(ORDER_QUERY_KEYS.lists()),
-          queryClient.invalidateQueries(ORDER_QUERY_KEYS.detail(order.orderId)),
+          queryClient.invalidateQueries(ORDER_QUERY_KEYS.detail(order.id)),
           queryClient.invalidateQueries(ORDER_QUERY_KEYS.emailStatistics()),
-          queryClient.invalidateQueries(ORDER_QUERY_KEYS.emailTracking(order.orderId)),
+          queryClient.invalidateQueries(ORDER_QUERY_KEYS.emailTracking(order.id)),
         ])
       },
     },

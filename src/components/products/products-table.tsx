@@ -38,7 +38,7 @@ export function ProductsTable({
               ) : null}
             </div>
             <p className='line-clamp-2 text-xs text-muted-foreground'>{product.description}</p>
-            <p className='font-mono text-[11px] text-muted-foreground'>{product.productId}</p>
+            <p className='font-mono text-[11px] text-muted-foreground'>{product.id}</p>
           </div>
         )
       },
@@ -62,7 +62,7 @@ export function ProductsTable({
       id: 'inventory',
       header: 'Inventory',
       cell: (product) => {
-        const inventory = inventoryByProductId?.get(product.productId)
+        const inventory = inventoryByProductId?.get(product.id)
         if (!inventory) {
           return <span className='text-sm text-muted-foreground'>Unavailable</span>
         }
@@ -102,7 +102,7 @@ export function ProductsTable({
       cell: (product) => (
         <div className='flex justify-end gap-1'>
           <Link
-            href={`/admin/products/${product.productId}/edit`}
+            href={`/admin/products/${product.id}/edit`}
             className={buttonVariants({ variant: 'ghost', size: 'icon-sm' })}
             title='Edit product'
             aria-label='Edit product'
@@ -119,11 +119,11 @@ export function ProductsTable({
     <DataTable
       columns={columns}
       data={products}
-      rowKey={(product) => product.productId}
+      rowKey={(product) => product.id}
       emptyTitle='No products yet'
       emptyDescription='Create the first product to populate the table.'
       mobileCard={(product) => {
-        const inventory = inventoryByProductId?.get(product.productId)
+        const inventory = inventoryByProductId?.get(product.id)
         const stockStatus = inventory ? getInventoryStockStatus(inventory.availableQuantity) : null
 
         return (
@@ -131,7 +131,7 @@ export function ProductsTable({
             <div className='flex items-start justify-between gap-2'>
               <div className='min-w-0'>
                 <p className='truncate font-medium'>{product.name}</p>
-                <p className='font-mono text-[11px] text-muted-foreground'>{product.productId}</p>
+                <p className='font-mono text-[11px] text-muted-foreground'>{product.id}</p>
               </div>
               <Badge variant={product.status === 'ACTIVE' ? 'default' : 'secondary'}>
                 {product.status}
@@ -147,7 +147,7 @@ export function ProductsTable({
             </div>
             <div className='flex justify-end gap-1'>
               <Link
-                href={`/admin/products/${product.productId}/edit`}
+                href={`/admin/products/${product.id}/edit`}
                 className={buttonVariants({ variant: 'ghost', size: 'icon-sm' })}
                 title='Edit product'
                 aria-label='Edit product'

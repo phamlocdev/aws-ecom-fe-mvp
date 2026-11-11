@@ -121,7 +121,7 @@ export default function OrderPaymentReturnPage() {
           <div className='grid gap-3 rounded-xl border bg-muted/20 p-4 sm:grid-cols-2'>
             <div className='space-y-2'>
               <div className='text-xs uppercase tracking-wide text-muted-foreground'>Order</div>
-              <div className='font-mono text-sm'>{order.orderId}</div>
+              <div className='font-mono text-sm'>{order.id}</div>
               <div className='flex flex-wrap gap-2'>
                 <OrderStatusBadge status={order.status} />
                 <PaymentStatusBadge status={order.paymentStatus} />
@@ -162,7 +162,7 @@ export default function OrderPaymentReturnPage() {
             Refresh status
           </Button>
           <Link
-            href={`/orders/${encodeURIComponent(order.orderId)}`}
+            href={`/orders/${encodeURIComponent(order.id)}`}
             className={buttonVariants({ className: 'w-full sm:w-auto' })}
           >
             View order details

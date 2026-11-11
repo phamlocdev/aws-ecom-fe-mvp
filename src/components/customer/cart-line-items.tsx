@@ -23,7 +23,7 @@ export function CartLineItems({
   return (
     <div className='space-y-4'>
       {items.map((item) => (
-        <Card key={item.product.productId}>
+        <Card key={item.product.id}>
           <CardHeader className='gap-3 sm:flex-row sm:items-start sm:justify-between'>
             <div className='min-w-0 space-y-1'>
               <CardTitle className='line-clamp-2'>{item.product.name}</CardTitle>
@@ -33,7 +33,7 @@ export function CartLineItems({
           </CardHeader>
           <CardContent className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
             <Link
-              href={`/products/${encodeURIComponent(item.product.productId)}`}
+              href={`/products/${encodeURIComponent(item.product.id)}`}
               className='text-sm text-primary hover:underline'
             >
               View product
@@ -44,7 +44,7 @@ export function CartLineItems({
                 variant='outline'
                 size='icon-sm'
                 disabled={isPending || item.quantity <= 1}
-                onClick={() => onDecrease(item.product.productId, item.quantity)}
+                onClick={() => onDecrease(item.product.id, item.quantity)}
               >
                 <Minus />
               </Button>
@@ -54,7 +54,7 @@ export function CartLineItems({
                 variant='outline'
                 size='icon-sm'
                 disabled={isPending}
-                onClick={() => onIncrease(item.product.productId, item.quantity)}
+                onClick={() => onIncrease(item.product.id, item.quantity)}
               >
                 <Plus />
               </Button>
@@ -66,7 +66,7 @@ export function CartLineItems({
               variant='destructive'
               size='sm'
               disabled={isPending}
-              onClick={() => onRemove(item.product.productId)}
+              onClick={() => onRemove(item.product.id)}
             >
               <Trash2 />
               Remove

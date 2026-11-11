@@ -47,7 +47,7 @@ export function useUpdateProductMutation() {
     {
       onSuccess: (product) => {
         void queryClient.invalidateQueries(PRODUCT_QUERY_KEYS.lists())
-        void queryClient.invalidateQueries(PRODUCT_QUERY_KEYS.detail(product.productId))
+        void queryClient.invalidateQueries(PRODUCT_QUERY_KEYS.detail(product.id))
         void queryClient.invalidateQueries(INVENTORY_QUERY_KEYS.lists())
       },
     },

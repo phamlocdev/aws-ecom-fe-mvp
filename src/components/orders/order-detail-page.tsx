@@ -110,7 +110,7 @@ export function OrderDetailPage() {
       <PageHeader
         className='sm:items-start'
         title='Order details'
-        subtitle={<span className='font-mono text-xs'>{order.orderId}</span>}
+        subtitle={<span className='font-mono text-xs'>{order.id}</span>}
         actions={
           <div className='flex flex-wrap gap-2'>
             <OrderStatusBadge status={order.status} />

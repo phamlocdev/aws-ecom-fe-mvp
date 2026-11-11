@@ -14,7 +14,7 @@ export function DeleteProductDialog({ product }: { product: Product }) {
 
   async function onDelete(close: () => void) {
     try {
-      await deleteMutation.mutateAsync(product.productId)
+      await deleteMutation.mutateAsync(product.id)
       toast.success('Product deleted')
       close()
     } catch (error) {

@@ -33,7 +33,7 @@ export default function ProductsPage() {
   )
   const productsPage = productsResult.data
   const products = productsPage?.items ?? []
-  const productIds = products.map((product) => product.productId)
+  const productIds = products.map((product) => product.id)
   const inventoryResult = useInventoriesQuery(
     {
       productIds,

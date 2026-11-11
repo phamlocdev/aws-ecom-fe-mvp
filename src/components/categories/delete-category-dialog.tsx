@@ -14,7 +14,7 @@ export function DeleteCategoryDialog({ category }: { category: Category }) {
 
   async function onDelete(close: () => void) {
     try {
-      await deleteMutation.mutateAsync(category.categoryId)
+      await deleteMutation.mutateAsync(category.id)
       toast.success('Category deleted')
       close()
     } catch (error) {
