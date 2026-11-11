@@ -37,7 +37,7 @@ export function AdminOrderDetailPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className='text-xl'>{order.orderId}</CardTitle>
+          <CardTitle className='text-xl'>{order.id}</CardTitle>
         </CardHeader>
         <CardContent className='grid gap-3 text-sm'>
           <div>Customer: {order.customerEmail ?? order.customerId}</div>
@@ -78,7 +78,7 @@ export function AdminOrderDetailPage() {
         </CardContent>
       </Card>
 
-      <OrderEmailTrackingPanel orderId={order.orderId} />
+      <OrderEmailTrackingPanel orderId={order.id} />
     </div>
   )
 }

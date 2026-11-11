@@ -33,7 +33,7 @@ export default function AdminDashboardPage() {
   const activeProducts = products.filter((product) => product.status === 'ACTIVE').length
   const inventoryValue = products.reduce((sum, product) => sum + product.price, 0)
   const orphanProducts = products.filter(
-    (product) => !categories.some((category) => category.categoryId === product.categoryId),
+    (product) => !categories.some((category) => category.id === product.categoryId),
   ).length
 
   const productsError = productsResult.error ? toApiClientError(productsResult.error) : null
@@ -158,7 +158,7 @@ function RecentProducts({ products }: { products: Product[] }) {
         ) : (
           products.map((product) => (
             <div
-              key={product.productId}
+              key={product.id}
               className='flex items-center justify-between gap-4 border-b pb-3 last:border-0 last:pb-0'
             >
               <div className='min-w-0'>
@@ -188,12 +188,12 @@ function RecentCategories({ categories }: { categories: Category[] }) {
         ) : (
           categories.map((category) => (
             <div
-              key={category.categoryId}
+              key={category.id}
               className='flex items-center justify-between gap-4 border-b pb-3 last:border-0 last:pb-0'
             >
               <div className='min-w-0'>
                 <p className='truncate text-sm font-medium'>{category.name}</p>
-                <p className='font-mono text-xs text-muted-foreground'>{category.categoryId}</p>
+                <p className='font-mono text-xs text-muted-foreground'>{category.id}</p>
               </div>
             </div>
           ))

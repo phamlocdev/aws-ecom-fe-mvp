@@ -16,8 +16,8 @@ export function useActiveCart() {
     }
 
     const cart = await createCartMutation.mutateAsync({ ttlDays: 30 })
-    setActiveCartId(cart.cartId)
-    return cart.cartId
+    setActiveCartId(cart.id)
+    return cart.id
   }
 
   return {

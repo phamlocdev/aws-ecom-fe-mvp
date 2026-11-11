@@ -16,7 +16,7 @@ export function InventoriesTable({
   inventories: InventorySummary[]
   categories: Category[]
 }) {
-  const categoryNames = new Map(categories.map((category) => [category.categoryId, category.name]))
+  const categoryNames = new Map(categories.map((category) => [category.id, category.name]))
 
   const columns: ColumnDef<InventorySummary>[] = [
     {

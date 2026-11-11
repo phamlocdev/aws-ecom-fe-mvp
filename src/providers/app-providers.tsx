@@ -3,6 +3,7 @@
 import { useEffect, useMemo, type ReactNode } from 'react'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { QueryClient, QueryClientProvider } from 'react-query'
+import { ReactQueryDevtools } from 'react-query/devtools'
 import { ClientRouteGuard } from '@/components/routing/client-route-guard'
 import { ThemeProvider } from '@/providers/theme-provider'
 import { configureAmplify } from '@/lib/auth'
@@ -16,6 +17,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
           queries: {
             refetchOnWindowFocus: false,
             retry: 1,
+            staleTime: 5 * 60 * 1000, // 5 minutes
           },
         },
       }),
@@ -34,6 +36,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
         <QueryClientProvider client={queryClient}>
           <ClientRouteGuard />
           {children}
+          <ReactQueryDevtools initialIsOpen={false} position='bottom-right' />
         </QueryClientProvider>
       </NuqsAdapter>
     </ThemeProvider>

@@ -33,7 +33,7 @@ export default function ProductsPage() {
   )
   const productsPage = productsResult.data
   const products = productsPage?.items ?? []
-  const productIds = products.map((product) => product.productId)
+  const productIds = products.map((product) => product.id)
   const inventoryResult = useInventoriesQuery(
     {
       productIds,
@@ -108,11 +108,7 @@ export default function ProductsPage() {
         <ProductsSkeleton />
       ) : !productsError ? (
         <>
-          <ProductsTable
-            products={products}
-            categories={categories}
-            inventoryByProductId={inventoryByProductId}
-          />
+          <ProductsTable products={products} inventoryByProductId={inventoryByProductId} />
           {productsPage ? (
             <PaginationControls
               limit={productsPage.limit}

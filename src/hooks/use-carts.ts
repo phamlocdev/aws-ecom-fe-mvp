@@ -25,7 +25,7 @@ export function useCreateCartMutation() {
   return useMutation((input?: { ttlDays?: number }) => createCart(input), {
     onSuccess: (cart) => {
       void queryClient.invalidateQueries(CART_QUERY_KEYS.lists())
-      void queryClient.invalidateQueries(CART_QUERY_KEYS.detail(cart.cartId))
+      void queryClient.invalidateQueries(CART_QUERY_KEYS.detail(cart.id))
     },
   })
 }
@@ -36,7 +36,7 @@ export function useAddCartItemMutation() {
   return useMutation(addCartItem, {
     onSuccess: (cart) => {
       void queryClient.invalidateQueries(CART_QUERY_KEYS.lists())
-      void queryClient.invalidateQueries(CART_QUERY_KEYS.detail(cart.cartId))
+      void queryClient.invalidateQueries(CART_QUERY_KEYS.detail(cart.id))
     },
   })
 }
@@ -47,7 +47,7 @@ export function useUpdateCartItemMutation() {
   return useMutation(updateCartItem, {
     onSuccess: (cart) => {
       void queryClient.invalidateQueries(CART_QUERY_KEYS.lists())
-      void queryClient.invalidateQueries(CART_QUERY_KEYS.detail(cart.cartId))
+      void queryClient.invalidateQueries(CART_QUERY_KEYS.detail(cart.id))
     },
   })
 }

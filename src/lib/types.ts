@@ -39,11 +39,17 @@ export type UserAddress = {
   notes?: string
 }
 
+export type ProductCategorySummary = {
+  categoryId: string
+  name: string
+}
+
 export type Product = {
-  productId: string
+  id: string
   name: string
   description: string
   categoryId: string
+  category?: ProductCategorySummary
   price: number
   currency: string
   imageUrl?: string
@@ -178,7 +184,7 @@ export type InventorySummary = InventoryRecord & {
 }
 
 export type Category = {
-  categoryId: string
+  id: string
   name: string
   description?: string
   status?: 'ACTIVE' | 'DELETED'
@@ -222,7 +228,7 @@ export type AuditLogQueryResult = {
 
 export type Cart = {
   customerId: string
-  cartId: string
+  id: string
   status: CartStatus
   createdAt: string
   updatedAt: string
@@ -243,7 +249,7 @@ export type CartDetails = Cart & {
 }
 
 export type Order = {
-  orderId: string
+  id: string
   customerId: string
   customerEmail?: string
   customerName?: string

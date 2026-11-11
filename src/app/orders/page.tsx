@@ -48,10 +48,10 @@ export default function OrdersPage() {
       <PageHeader title='Your orders' subtitle='Track checkout and payment progress.' />
       <div className='space-y-4'>
         {orders.map((order) => (
-          <Card key={order.orderId}>
+          <Card key={order.id}>
             <CardHeader className='gap-3 sm:flex-row sm:items-start sm:justify-between'>
               <div className='space-y-2'>
-                <CardTitle className='font-mono text-sm'>{order.orderId}</CardTitle>
+                <CardTitle className='font-mono text-sm'>{order.id}</CardTitle>
                 <div className='flex flex-wrap gap-2'>
                   <OrderStatusBadge status={order.status} />
                   <PaymentStatusBadge status={order.paymentStatus} />
@@ -67,7 +67,7 @@ export default function OrdersPage() {
                 {order.failureReason ?? order.paymentFailureReason ?? 'Open the order to continue or inspect status.'}
               </p>
               <Link
-                href={`/orders/${encodeURIComponent(order.orderId)}`}
+                href={`/orders/${encodeURIComponent(order.id)}`}
                 className={buttonVariants({ variant: 'outline' })}
               >
                 View order

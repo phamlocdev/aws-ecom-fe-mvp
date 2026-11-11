@@ -16,7 +16,7 @@ export function CustomerProductsGrid({
   products: Product[]
   categories: Category[]
 }) {
-  const categoryNames = new Map(categories.map((category) => [category.categoryId, category.name]))
+  const categoryNames = new Map(categories.map((category) => [category.id, category.name]))
 
   if (products.length === 0) {
     return (
@@ -37,7 +37,7 @@ export function CustomerProductsGrid({
 
         return (
           <article
-            key={product.productId}
+            key={product.id}
             className='group overflow-hidden rounded-[1.75rem] border bg-card/88 shadow-sm transition-transform duration-200 hover:-translate-y-1'
           >
             <div className='relative aspect-[4/3] overflow-hidden bg-[linear-gradient(135deg,_rgba(245,158,11,0.2),_rgba(15,23,42,0.04))]'>
@@ -81,7 +81,7 @@ export function CustomerProductsGrid({
 
               <div className='flex items-center justify-between gap-3'>
                 <Link
-                  href={`/customer/products/${encodeURIComponent(product.productId)}`}
+                  href={`/customer/products/${encodeURIComponent(product.id)}`}
                   className='inline-flex items-center gap-2 rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background transition-opacity hover:opacity-90'
                 >
                   View detail

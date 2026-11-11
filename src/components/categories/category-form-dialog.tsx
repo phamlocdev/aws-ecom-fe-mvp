@@ -46,7 +46,7 @@ export function CategoryFormDialog({ category }: { category?: Category }) {
     form.reset(
       category
         ? {
-            categoryId: category.categoryId,
+            categoryId: category.id,
             name: category.name,
             description: category.description,
           }
@@ -61,7 +61,7 @@ export function CategoryFormDialog({ category }: { category?: Category }) {
           name: values.name,
           description: values.description,
         }
-        await updateMutation.mutateAsync({ categoryId: category.categoryId, input })
+        await updateMutation.mutateAsync({ categoryId: category.id, input })
       } else {
         await createMutation.mutateAsync(values)
       }
@@ -114,7 +114,7 @@ export function CategoryFormDialog({ category }: { category?: Category }) {
       ) : (
         <div className='space-y-2'>
           <Label>Category ID</Label>
-          <Input value={category?.categoryId ?? ''} disabled />
+          <Input value={category?.id ?? ''} disabled />
         </div>
       )}
 

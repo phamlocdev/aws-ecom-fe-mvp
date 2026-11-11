@@ -32,7 +32,7 @@ export function ProductDetailPage() {
   const product = productResult.data
   const categories = categoriesResult.data?.items ?? []
   const category = product
-    ? categories.find((item) => item.categoryId === product.categoryId)
+    ? categories.find((item) => item.id === product.categoryId)
     : undefined
   const productError = productResult.error ? toApiClientError(productResult.error) : null
 
@@ -70,7 +70,7 @@ export function ProductDetailPage() {
       const cartId = await ensureActiveCart()
       await addCartItemMutation.mutateAsync({
         cartId,
-        productId: resolvedProduct.productId,
+        productId: resolvedProduct.id,
         quantity: 1,
       })
       toast.success(`${resolvedProduct.name} added to cart`)
@@ -141,7 +141,7 @@ export function ProductDetailPage() {
           <dl className='grid gap-3 rounded-xl border bg-card p-4 text-sm'>
             <div className='flex justify-between gap-4'>
               <dt className='text-muted-foreground'>Product ID</dt>
-              <dd className='font-mono text-xs'>{product.productId}</dd>
+              <dd className='font-mono text-xs'>{product.id}</dd>
             </div>
             <div className='flex justify-between gap-4'>
               <dt className='text-muted-foreground'>Currency</dt>

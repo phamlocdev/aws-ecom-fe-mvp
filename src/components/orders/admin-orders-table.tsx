@@ -30,7 +30,7 @@ export function AdminOrdersTable({
       headerClassName: 'w-[28%]',
       cell: (order) => (
         <div className='min-w-0 space-y-1'>
-          <p className='truncate font-mono text-xs font-medium'>{order.orderId}</p>
+          <p className='truncate font-mono text-xs font-medium'>{order.id}</p>
           <p className='text-xs text-muted-foreground'>Cart {order.cartId}</p>
         </div>
       ),
@@ -52,7 +52,7 @@ export function AdminOrdersTable({
       header: 'Status',
       cell: (order) => {
         const canShip = order.status === 'CONFIRMED' && order.paymentStatus === 'PAID'
-        const isUpdating = updatingOrderId === order.orderId
+        const isUpdating = updatingOrderId === order.id
 
         return (
           <div className='flex items-center gap-2'>
@@ -100,7 +100,7 @@ export function AdminOrdersTable({
       cell: (order) => (
         <div className='flex justify-end'>
           <Link
-            href={`/admin/orders/${order.orderId}`}
+            href={`/admin/orders/${order.id}`}
             className={cn(buttonVariants({ variant: 'ghost', size: 'icon-sm' }))}
             title='View order'
             aria-label='View order'
@@ -116,20 +116,20 @@ export function AdminOrdersTable({
     <DataTable
       columns={columns}
       data={orders}
-      rowKey={(order) => order.orderId}
+      rowKey={(order) => order.id}
       emptyTitle='No orders found'
       emptyDescription='Orders will appear here after checkout.'
       mobileCard={(order) => (
         <div className='space-y-2 p-4'>
           <div className='flex items-start justify-between gap-2'>
             <div className='min-w-0'>
-              <p className='truncate font-mono text-xs font-medium'>{order.orderId}</p>
+              <p className='truncate font-mono text-xs font-medium'>{order.id}</p>
               <p className='truncate text-xs text-muted-foreground'>
                 {order.customerEmail ?? order.customerId}
               </p>
             </div>
             <Link
-              href={`/admin/orders/${order.orderId}`}
+              href={`/admin/orders/${order.id}`}
               className={cn(buttonVariants({ variant: 'ghost', size: 'icon-sm' }))}
               title='View order'
               aria-label='View order'

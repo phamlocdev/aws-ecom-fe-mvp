@@ -45,7 +45,7 @@ export function useUpdateCategoryMutation() {
     {
       onSuccess: (category) => {
         void queryClient.invalidateQueries(CATEGORY_QUERY_KEYS.lists())
-        void queryClient.invalidateQueries(CATEGORY_QUERY_KEYS.detail(category.categoryId))
+        void queryClient.invalidateQueries(CATEGORY_QUERY_KEYS.detail(category.id))
       },
     },
   )

@@ -11,19 +11,15 @@ import {
   getInventoryStockStatus,
 } from '@/lib/inventory'
 import { getProductImageSrc } from '@/lib/product-images'
-import type { Category, InventorySummary, Product } from '@/lib/types'
+import type { InventorySummary, Product } from '@/lib/types'
 
 export function ProductsTable({
   products,
-  categories,
   inventoryByProductId,
 }: {
   products: Product[]
-  categories: Category[]
   inventoryByProductId?: Map<string, InventorySummary>
 }) {
-  const categoryNames = new Map(categories.map((category) => [category.categoryId, category.name]))
-
   const columns: ColumnDef<Product>[] = [
     {
       id: 'product',
@@ -42,7 +38,7 @@ export function ProductsTable({
               ) : null}
             </div>
             <p className='line-clamp-2 text-xs text-muted-foreground'>{product.description}</p>
-            <p className='font-mono text-[11px] text-muted-foreground'>{product.productId}</p>
+            <p className='font-mono text-[11px] text-muted-foreground'>{product.id}</p>
           </div>
         )
       },
@@ -52,7 +48,7 @@ export function ProductsTable({
       header: 'Category',
       cell: (product) => (
         <div className='space-y-1'>
-          <p className='text-sm'>{categoryNames.get(product.categoryId) ?? product.categoryId}</p>
+          <p className='text-sm'>{product.category?.name ?? product.categoryId}</p>
           <p className='font-mono text-[11px] text-muted-foreground'>{product.categoryId}</p>
         </div>
       ),
@@ -66,7 +62,7 @@ export function ProductsTable({
       id: 'inventory',
       header: 'Inventory',
       cell: (product) => {
-        const inventory = inventoryByProductId?.get(product.productId)
+        const inventory = inventoryByProductId?.get(product.id)
         if (!inventory) {
           return <span className='text-sm text-muted-foreground'>Unavailable</span>
         }
@@ -106,7 +102,7 @@ export function ProductsTable({
       cell: (product) => (
         <div className='flex justify-end gap-1'>
           <Link
-            href={`/admin/products/${product.productId}/edit`}
+            href={`/admin/products/${product.id}/edit`}
             className={buttonVariants({ variant: 'ghost', size: 'icon-sm' })}
             title='Edit product'
             aria-label='Edit product'
@@ -123,11 +119,11 @@ export function ProductsTable({
     <DataTable
       columns={columns}
       data={products}
-      rowKey={(product) => product.productId}
+      rowKey={(product) => product.id}
       emptyTitle='No products yet'
       emptyDescription='Create the first product to populate the table.'
       mobileCard={(product) => {
-        const inventory = inventoryByProductId?.get(product.productId)
+        const inventory = inventoryByProductId?.get(product.id)
         const stockStatus = inventory ? getInventoryStockStatus(inventory.availableQuantity) : null
 
         return (
@@ -135,7 +131,7 @@ export function ProductsTable({
             <div className='flex items-start justify-between gap-2'>
               <div className='min-w-0'>
                 <p className='truncate font-medium'>{product.name}</p>
-                <p className='font-mono text-[11px] text-muted-foreground'>{product.productId}</p>
+                <p className='font-mono text-[11px] text-muted-foreground'>{product.id}</p>
               </div>
               <Badge variant={product.status === 'ACTIVE' ? 'default' : 'secondary'}>
                 {product.status}
@@ -151,7 +147,7 @@ export function ProductsTable({
             </div>
             <div className='flex justify-end gap-1'>
               <Link
-                href={`/admin/products/${product.productId}/edit`}
+                href={`/admin/products/${product.id}/edit`}
                 className={buttonVariants({ variant: 'ghost', size: 'icon-sm' })}
                 title='Edit product'
                 aria-label='Edit product'

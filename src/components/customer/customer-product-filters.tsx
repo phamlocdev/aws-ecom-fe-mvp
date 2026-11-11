@@ -38,7 +38,7 @@ export function CustomerProductFilters({
           >
             <option value=''>All categories</option>
             {categories.map((category) => (
-              <option key={category.categoryId} value={category.categoryId}>
+              <option key={category.id} value={category.id}>
                 {category.name}
               </option>
             ))}

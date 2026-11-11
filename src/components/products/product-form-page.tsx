@@ -172,7 +172,7 @@ export function ProductFormPage({
       }
 
       if (product) {
-        await updateMutation.mutateAsync({ productId: product.productId, input: payload })
+        await updateMutation.mutateAsync({ productId: product.id, input: payload })
         toast.success('Product updated')
       } else {
         await createMutation.mutateAsync(payload)
@@ -292,7 +292,7 @@ export function ProductFormPage({
                       </SelectTrigger>
                       <SelectContent>
                         {categories.map((category) => (
-                          <SelectItem key={category.categoryId} value={category.categoryId}>
+                          <SelectItem key={category.id} value={category.id}>
                             {category.name}
                           </SelectItem>
                         ))}
